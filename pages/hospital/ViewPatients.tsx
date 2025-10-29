@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +68,7 @@ interface Patient {
   signature_ipfs_hash?: string;
   blockchain_hash?: string;
   signature_verified: boolean;
+  profile_photo?: string | null;
   registration_date: string;
   is_active: boolean;
   created_at: string;
@@ -474,6 +476,12 @@ export default function ViewPatients() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center space-x-4 mb-4">
+                        <ProfileAvatar
+                          photoBase64={patient.profile_photo}
+                          gender={patient.gender}
+                          fullName={patient.full_name}
+                          size="md"
+                        />
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {patient.full_name}

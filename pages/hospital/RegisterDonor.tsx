@@ -84,6 +84,8 @@ export default function RegisterDonor() {
   const [registeredDonorId, setRegisteredDonorId] = useState("");
   const [signatureFile, setSignatureFile] = useState<File | null>(null);
   const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
+  const [verificationType, setVerificationType] = useState<'signature' | 'aadhaar'>('signature');
+  const [aadhaarLast4, setAadhaarLast4] = useState('');
 
   const { hospital } = useHospitalAuth();
   const { error: showError, success: showSuccess } = useToast();
@@ -341,10 +343,16 @@ export default function RegisterDonor() {
       formDataToSend.append('date_of_birth', `${birthYear}-01-01`); // Approximate DOB
       formDataToSend.append('national_id', `DON_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`); // Generated ID
       
-      // Add signature file
+      // Add signature file and verification type
       formDataToSend.append('signature', signatureFile);
+      formDataToSend.append('verification_type', verificationType);
       
-      console.log('Submitting donor registration with signature...');
+      // Add Aadhaar last 4 digits if Aadhaar verification
+      if (verificationType === 'aadhaar') {
+        formDataToSend.append('aadhaar_last4', aadhaarLast4);
+      }
+      
+      console.log(`Submitting donor registration with ${verificationType}...`);
       
       const response = await fetch("/api/hospital/donors/register", {
         method: "POST",
@@ -637,30 +645,83 @@ export default function RegisterDonor() {
                       />
                     </div>
 
-                    {/* Signature Upload */}
-                    <div>
-                      <Label htmlFor="signature">Signature Image *</Label>
-                      <Input
-                        id="signature"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleSignatureUpload}
-                        required
-                        className="mt-1"
-                      />
-                      {signaturePreview && (
-                        <div className="mt-2">
-                          <p className="text-sm text-gray-600 mb-1">Preview:</p>
-                          <img
-                            src={signaturePreview}
-                            alt="Signature preview"
-                            className="max-w-xs max-h-32 object-contain border border-gray-300 rounded"
-                          />
+                    {/* Document Upload with Type Selection */}
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="signature">Upload Document *</Label>
+                        <div className="flex gap-4 mt-2 mb-2">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="verificationType"
+                              value="signature"
+                              checked={verificationType === 'signature'}
+                              onChange={(e) => {
+                                setVerificationType(e.target.value as 'signature' | 'aadhaar');
+                                setAadhaarLast4(''); // Clear Aadhaar field
+                              }}
+                              className="w-4 h-4 text-medical-600"
+                            />
+                            <span className="text-sm font-medium">Signature</span>
+                          </label>
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="verificationType"
+                              value="aadhaar"
+                              checked={verificationType === 'aadhaar'}
+                              onChange={(e) => setVerificationType(e.target.value as 'signature' | 'aadhaar')}
+                              className="w-4 h-4 text-medical-600"
+                            />
+                            <span className="text-sm font-medium">Aadhaar Card</span>
+                          </label>
                         </div>
-                      )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        Upload a clear signature image (JPEG, PNG, WEBP)
-                      </p>
+
+                        {/* Aadhaar Last 4 Digits (only show when Aadhaar selected) */}
+                        {verificationType === 'aadhaar' && (
+                          <div className="mb-3">
+                            <Label htmlFor="aadhaar_last4">Last 4 Digits of Aadhaar *</Label>
+                            <Input
+                              id="aadhaar_last4"
+                              type="text"
+                              maxLength={4}
+                              pattern="[0-9]{4}"
+                              value={aadhaarLast4}
+                              onChange={(e) => setAadhaarLast4(e.target.value.replace(/\D/g, ''))}
+                              placeholder="Enter last 4 digits (e.g., 7481)"
+                              required={verificationType === 'aadhaar'}
+                              className="mt-1"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                              We'll verify this matches your Aadhaar card
+                            </p>
+                          </div>
+                        )}
+
+                        <Input
+                          id="signature"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleSignatureUpload}
+                          required
+                          className="mt-1"
+                        />
+                        {signaturePreview && (
+                          <div className="mt-2">
+                            <p className="text-sm text-gray-600 mb-1">Preview:</p>
+                            <img
+                              src={signaturePreview}
+                              alt={verificationType === 'signature' ? 'Signature preview' : 'Aadhaar preview'}
+                              className="max-w-xs max-h-32 object-contain border border-gray-300 rounded"
+                            />
+                          </div>
+                        )}
+                        <p className="text-xs text-gray-500 mt-1">
+                          {verificationType === 'signature'
+                            ? '📝 Upload a clear signature image (for demo/testing)'
+                            : '🪪 Upload Aadhaar card (front side) for verification'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

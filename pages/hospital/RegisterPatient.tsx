@@ -85,6 +85,7 @@ export default function RegisterPatient() {
   const [registeredPatientId, setRegisteredPatientId] = useState("");
   const [signatureFile, setSignatureFile] = useState<File | null>(null);
   const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
+  const [verificationType, setVerificationType] = useState<'signature' | 'aadhaar'>('signature');
 
   const { hospital } = useHospitalAuth();
   const { error: showError, success: showSuccess } = useToast();
@@ -331,10 +332,11 @@ export default function RegisterPatient() {
       formDataToSend.append('date_of_birth', `${birthYear}-01-01`); // Approximate DOB
       formDataToSend.append('national_id', `PAT_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`); // Generated ID
       
-      // Add signature file
+      // Add signature file and verification type
       formDataToSend.append('signature', signatureFile!);
+      formDataToSend.append('verification_type', verificationType);
       
-      console.log('Submitting patient registration with signature...');
+      console.log(`Submitting patient registration with ${verificationType}...`);
       
       const response = await fetch("/api/hospital/patients/register", {
         method: "POST",
@@ -648,21 +650,49 @@ export default function RegisterPatient() {
                   </div>
                 </div>
 
-                {/* Signature Upload Section */}
+                {/* Document Upload Section */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium text-gray-900">
-                    Signature Upload *
+                    Document Upload *
                   </h3>
+                  <div className="flex gap-4 mb-3">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="verificationType"
+                        value="signature"
+                        checked={verificationType === 'signature'}
+                        onChange={(e) => setVerificationType(e.target.value as 'signature' | 'aadhaar')}
+                        className="w-4 h-4 text-medical-600"
+                      />
+                      <span className="text-sm font-medium">Signature</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="verificationType"
+                        value="aadhaar"
+                        checked={verificationType === 'aadhaar'}
+                        onChange={(e) => setVerificationType(e.target.value as 'signature' | 'aadhaar')}
+                        className="w-4 h-4 text-medical-600"
+                      />
+                      <span className="text-sm font-medium">Aadhaar Card</span>
+                    </label>
+                  </div>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                     {!signaturePreview ? (
                       <div className="text-center">
                         <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                         <div>
                           <h4 className="text-lg font-medium text-gray-900 mb-2">
-                            Upload Patient Consent Document
+                            {verificationType === 'signature' 
+                              ? 'Upload Patient Consent Document'
+                              : 'Upload Aadhaar Card'}
                           </h4>
                           <p className="text-gray-600 mb-4">
-                            Upload a signed consent form, signature document, or authorization letter
+                            {verificationType === 'signature'
+                              ? 'Upload a signed consent form, signature document, or authorization letter'
+                              : 'Upload a clear scan or photo of patient\'s Aadhaar card (front side only). Supports both color and black & white.'}
                           </p>
                         </div>
                         <input
@@ -680,7 +710,7 @@ export default function RegisterPatient() {
                           >
                             <span>
                               <Upload className="h-4 w-4 mr-2" />
-                              Choose Signature File
+                              {verificationType === 'signature' ? 'Choose Signature File' : 'Choose Aadhaar Card'}
                             </span>
                           </Button>
                         </label>
@@ -693,7 +723,7 @@ export default function RegisterPatient() {
                         <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
                         <div>
                           <h4 className="text-lg font-medium text-gray-900 mb-2">
-                            Signature Uploaded Successfully
+                            {verificationType === 'signature' ? 'Signature' : 'Aadhaar'} Uploaded Successfully
                           </h4>
                           <p className="text-gray-600 mb-4">
                             {signatureFile?.name}
@@ -702,7 +732,7 @@ export default function RegisterPatient() {
                         <div className="mb-4">
                           <img
                             src={signaturePreview}
-                            alt="Signature preview"
+                            alt={verificationType === 'signature' ? 'Signature preview' : 'Aadhaar preview'}
                             className="max-w-xs max-h-32 mx-auto border rounded"
                           />
                         </div>

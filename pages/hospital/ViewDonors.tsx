@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -519,6 +520,12 @@ export default function ViewDonors() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center space-x-4 mb-4">
+                        <ProfileAvatar
+                          photoBase64={donor.profile_photo}
+                          gender={donor.gender}
+                          fullName={donor.full_name}
+                          size="md"
+                        />
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {donor.full_name}
