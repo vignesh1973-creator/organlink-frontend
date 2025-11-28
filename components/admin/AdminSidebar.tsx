@@ -56,7 +56,11 @@ const navigation = [
   },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  onNavigate?: () => void;
+}
+
+export default function AdminSidebar({ onNavigate }: AdminSidebarProps) {
   const location = useLocation();
 
   return (
@@ -84,6 +88,7 @@ export default function AdminSidebar() {
             <Link
               key={item.name}
               to={item.href}
+              onClick={onNavigate}
               className={cn(
                 "flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
                 isActive

@@ -28,8 +28,8 @@ export default function IPFSLogs() {
       key: "file_hash",
       label: "File Hash",
       render: (_, row: IPFSLog) => (
-        <div>
-          <div className="font-mono text-sm text-gray-900">{row.hash}</div>
+        <div className="max-w-[150px] sm:max-w-[200px]">
+          <div className="font-mono text-sm text-gray-900 truncate" title={row.hash}>{row.hash}</div>
           <div className="text-xs text-gray-500">IPFS Hash</div>
         </div>
       ),

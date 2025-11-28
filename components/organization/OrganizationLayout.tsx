@@ -88,23 +88,87 @@ export default function OrganizationLayout({
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-gray-50">
+      {/* Mobile Sidebar Sheet */}
+      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+        <SheetContent side="left" className="w-72 p-0">
+          <div className="h-full flex flex-col bg-white">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+                  <Building2 className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-gray-900">OrganLink</span>
+              </div>
+            </div>
+            <div className="flex-1 py-6 px-4 space-y-2">
+              <NavLink
+                to="/organization/dashboard"
+                onClick={() => setMobileSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md text-base font-medium ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/organization/policies"
+                onClick={() => setMobileSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md text-base font-medium ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`
+                }
+              >
+                Policies
+              </NavLink>
+              <NavLink
+                to="/organization/policies/propose"
+                onClick={() => setMobileSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `block px-4 py-2 rounded-md text-base font-medium ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`
+                }
+              >
+                Propose Policy
+              </NavLink>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
       {/* Top Header */}
       <header className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Left side - Logo and Navigation */}
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-4 md:space-x-8">
+              <button
+                className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                onClick={() => setMobileSidebarOpen(true)}
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+
               <NavLink to="/organization/dashboard" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
                   <Building2 className="h-5 w-5 text-white" />
                 </div>
-                <div>
+                <div className="hidden md:block">
                   <h1 className="text-xl font-bold text-gray-900">OrganLink</h1>
                   <p className="text-xs text-gray-500">ORGANIZATION PORTAL</p>
                 </div>
               </NavLink>
               
-              {/* Navigation Links */}
+              {/* Navigation Links - Desktop */}
               <nav className="hidden md:flex space-x-8">
                 <NavLink
                   to="/organization/policies"
@@ -158,7 +222,7 @@ export default function OrganizationLayout({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 text-sm hover:bg-gray-100">
-                    <div className="text-right">
+                    <div className="text-right hidden sm:block">
                       <p className="font-medium text-gray-900">{user.name}</p>
                       <p className="text-xs text-gray-500">ORG-GLOBAL</p>
                     </div>

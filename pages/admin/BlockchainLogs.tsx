@@ -50,9 +50,9 @@ export default function BlockchainLogs() {
       key: "transaction_hash",
       label: "Transaction Hash",
       render: (value: string) => (
-        <div>
-          <div className="font-mono text-sm text-gray-900">
-            {value.slice(0, 20)}...
+        <div className="max-w-[150px] sm:max-w-[200px]">
+          <div className="font-mono text-sm text-gray-900 truncate" title={value}>
+            {value}
           </div>
           <div className="text-xs text-gray-500">Ethereum Sepolia</div>
         </div>

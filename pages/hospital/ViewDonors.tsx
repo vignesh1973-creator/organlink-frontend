@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,8 +65,8 @@ interface Donor {
   medical_history: string;
   contact_phone: string;
   contact_email: string;
-  guardian_name: string;
-  guardian_phone: string;
+  emergency_contact: string;
+  emergency_phone: string;
   signature_file_path?: string;
   signature_ipfs_hash?: string;
   blockchain_hash?: string;
@@ -76,9 +75,7 @@ interface Donor {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  status?: string;
-  matched_patient_id?: string;
-  matched_hospital_id?: string;
+  hospital_display_id?: number;
 }
 
 export default function ViewDonors() {
@@ -130,7 +127,7 @@ export default function ViewDonors() {
       Status: d.is_active ? "ACTIVE" : "INACTIVE",
       Registered: new Date(d.registration_date).toISOString().slice(0, 10),
       Verified: d.signature_verified ? "Yes" : "No",
-      TxHash: d.blockchain_hash || "",
+      TxHash: d.blockchain_tx_hash || "",
     }));
 
   const exportCSV = () => {
@@ -245,34 +242,6 @@ export default function ViewDonors() {
       month: "short",
       day: "numeric",
     });
-  };
-
-  const getStatusColor = (status?: string) => {
-    if (!status || status === "Available") return "bg-green-100 text-green-800";
-    switch (status) {
-      case "Matched":
-        return "bg-blue-100 text-blue-800";
-      case "Donated":
-        return "bg-purple-100 text-purple-800";
-      case "Unavailable":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusIcon = (status?: string) => {
-    if (!status || status === "Available") return "✅";
-    switch (status) {
-      case "Matched":
-        return "🟡";
-      case "Donated":
-        return "🎉";
-      case "Unavailable":
-        return "⛔";
-      default:
-        return "📋";
-    }
   };
 
   const organTypes = [
@@ -520,25 +489,16 @@ export default function ViewDonors() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center space-x-4 mb-4">
-                        <ProfileAvatar
-                          photoBase64={donor.profile_photo}
-                          gender={donor.gender}
-                          fullName={donor.full_name}
-                          size="md"
-                        />
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
                             {donor.full_name}
                           </h3>
                           <p className="text-sm text-gray-500">
-                            ID: {donor.donor_id} • Age: {donor.age} •{" "}
+                            ID: {donor.hospital_display_id ? `#${donor.hospital_display_id}` : donor.donor_id} • Age: {donor.age} •{" "}
                             {donor.gender}
                           </p>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge className={getStatusColor(donor.status)}>
-                            {getStatusIcon(donor.status)} {donor.status || "Available"}
-                          </Badge>
+                        <div className="flex space-x-2">
                           <Badge variant="outline">{donor.blood_type}</Badge>
                           {donor.signature_verified && (
                             <Badge className="bg-green-100 text-green-800">
@@ -547,7 +507,7 @@ export default function ViewDonors() {
                             </Badge>
                           )}
                           {donor.is_active && (
-                            <Badge className="bg-emerald-100 text-emerald-800">
+                            <Badge className="bg-blue-100 text-blue-800">
                               Active
                             </Badge>
                           )}
@@ -597,6 +557,12 @@ export default function ViewDonors() {
                         </div>
                       )}
 
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-600">
+                          <strong>Emergency Contact:</strong>{" "}
+                          {donor.emergency_contact} - {donor.emergency_phone}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex md:flex-col gap-2 md:space-y-2 md:ml-6">
@@ -629,7 +595,7 @@ export default function ViewDonors() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
 
-                      {donor.blockchain_hash && (
+                      {donor.blockchain_tx_hash && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -741,7 +707,7 @@ export default function ViewDonors() {
               <div>
                 <p className="font-medium text-gray-700">Blockchain</p>
                 {viewDonor.blockchain_hash &&
-                viewDonor.blockchain_hash.startsWith("0x") ? (
+                  viewDonor.blockchain_hash.startsWith("0x") ? (
                   <a
                     className="text-medical-600 underline"
                     target="_blank"
@@ -753,7 +719,7 @@ export default function ViewDonors() {
                   <p className="text-gray-600">
                     {viewDonor.blockchain_hash
                       ? "Demo TX (not on-chain)"
-                      : "Blockchain Verified"}
+                      : "Not registered"}
                   </p>
                 )}
               </div>
@@ -809,7 +775,7 @@ export default function ViewDonors() {
       </AlertDialog>
 
       <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Export Donor Data</DialogTitle>
             <DialogDescription>
@@ -912,7 +878,37 @@ export default function ViewDonors() {
                   });
                   doc.save(`donors_${Date.now()}.pdf`);
                 } else {
+                  // Create worksheet
                   const ws = XLSX.utils.json_to_sheet(rows);
+
+                  // Get worksheet range
+                  const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+
+                  // Style header row with green background and white text
+                  for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cellAddress = XLSX.utils.encode_col(C) + "1";
+                    if (!ws[cellAddress]) continue;
+                    ws[cellAddress].s = {
+                      fill: { fgColor: { rgb: "16A34A" } },
+                      font: { bold: true, color: { rgb: "FFFFFF" } },
+                      alignment: { horizontal: "center", vertical: "center" }
+                    };
+                  }
+
+                  // Center align all data cells
+                  for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                      if (!ws[cellAddress]) continue;
+                      ws[cellAddress].s = {
+                        alignment: { horizontal: "center", vertical: "center" }
+                      };
+                    }
+                  }
+
+                  // Set column widths
+                  ws['!cols'] = colKeys.map(() => ({ wch: 15 }));
+
                   const wb = XLSX.utils.book_new();
                   XLSX.utils.book_append_sheet(wb, ws, "Donors");
                   XLSX.writeFile(wb, `donors_${Date.now()}.xlsx`);

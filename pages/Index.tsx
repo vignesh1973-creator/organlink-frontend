@@ -55,12 +55,12 @@ function useInView(ref: React.RefObject<Element>, rootMargin = "0px") {
 
 // Framer Motion Animation Variants
 const fadeInUp = {
-  hidden: { 
-    opacity: 0, 
-    y: 60 
+  hidden: {
+    opacity: 0,
+    y: 60
   },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: {
       duration: 0.6,
@@ -78,12 +78,12 @@ const staggerChildren = {
 };
 
 const fadeInScale = {
-  hidden: { 
-    opacity: 0, 
-    scale: 0.8 
+  hidden: {
+    opacity: 0,
+    scale: 0.8
   },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     scale: 1,
     transition: {
       duration: 0.5,
@@ -96,7 +96,7 @@ const fadeInScale = {
 function MotionSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
   const isInView = useFramerInView(ref, { once: true, amount: 0.3 });
-  
+
   return (
     <motion.div
       ref={ref}
@@ -104,13 +104,13 @@ function MotionSection({ children, className = "", delay = 0 }: { children: Reac
       animate={isInView ? "visible" : "hidden"}
       variants={{
         hidden: { opacity: 0, y: 50 },
-        visible: { 
-          opacity: 1, 
+        visible: {
+          opacity: 1,
           y: 0,
-          transition: { 
-            duration: 0.6, 
+          transition: {
+            duration: 0.6,
             delay: delay,
-            ease: "easeOut" 
+            ease: "easeOut"
           }
         }
       }}
@@ -136,13 +136,13 @@ function CountUpNumber({
   useEffect(() => {
     if (!inView || !isFramerInView) return;
     let start: number | null = null;
-    const duration = 2000; // Increased duration for smoother animation
+    const duration = 2000;
     const startVal = 0;
     const endVal = value;
     const step = (ts: number) => {
       if (start === null) start = ts;
       const progress = Math.min((ts - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.floor(startVal + (endVal - startVal) * eased);
       setDisplay(current);
       if (progress < 1) requestAnimationFrame(step);
@@ -153,231 +153,16 @@ function CountUpNumber({
 
   const formatted = display.toLocaleString();
   return (
-    <motion.div 
-      ref={ref} 
+    <motion.div
+      ref={ref}
       initial={{ opacity: 0, scale: 0.5 }}
       animate={isFramerInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"
+      className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent break-words"
     >
       {formatted}
       {suffix}
     </motion.div>
-  );
-}
-
-type Testimonial = {
-  text: string;
-  name: string;
-  title: string;
-  org: string;
-  photo: string;
-};
-
-function chunk<T>(arr: T[], size: number): T[][] {
-  const res: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) res.push(arr.slice(i, i + size));
-  return res;
-}
-
-function TestimonialsCarousel() {
-  const testimonials: Testimonial[] = [
-    {
-      text: "OrganLink helped us reduce matching time drastically while keeping records transparent.",
-      name: "Dr. Emily Rodriguez",
-      title: "Nephrology Director",
-      org: "Apollo Hospital, Chennai",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2Fcf4e58ef984543b58df3e13a88ca2ddb?format=webp&width=200",
-    },
-    {
-      text: "The blockchain trail and IPFS storage give unparalleled confidence in the process.",
-      name: "Dr. James Wilson",
-      title: "Liver Transplant Specialist",
-      org: "Global Health Org",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2F2d318e7a6a764659878aa76289d2b0f4?format=webp&width=200",
-    },
-    {
-      text: "Real-time notifications connected us with donors faster than ever.",
-      name: "Dr. Maria Garcia",
-      title: "Pediatric Transplant Surgeon",
-      org: "City Care Hospital",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2F4a84ccdd532a49b888b9ae232b4b35e8?format=webp&width=200",
-    },
-    {
-      text: "Outstanding platform! The AI matching has revolutionized how we find compatible donors.",
-      name: "Dr. Ahmed Khan",
-      title: "Cardio-Thoracic Surgeon",
-      org: "MedCity Hospital",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2F8ce3b8f5ed784f5195df6ca3fa7b1741?format=webp&width=200",
-    },
-    {
-      text: "For pediatric cases, every second counts. OrganLink's speed has saved countless young lives.",
-      name: "Dr. Sarah Lee",
-      title: "Pediatrician",
-      org: "Children's Health Center",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2F75632058974a40e7822c919dc3add4cb?format=webp&width=200",
-    },
-    {
-      text: "Seamless onboarding and secure workflows. Our teams collaborate with confidence.",
-      name: "Dr. Ravi Patel",
-      title: "Transplant Coordinator",
-      org: "CarePlus Hospitals",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2Fd7c818018c9b40e2a1e5eaf655a1a32a?format=webp&width=200",
-    },
-    {
-      text: "The platform's transparency and compliance features are unmatched. We trust OrganLink for every case.",
-      name: "Dr. Michael Chen",
-      title: "Chief of Cardiology",
-      org: "Heart Center Medical",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2F8ce3b8f5ed784f5195df6ca3fa7b1741?format=webp&width=200",
-    },
-    {
-      text: "Real-time matching and secure data sharing gave us confidence in every transplant. OrganLink has significantly improved our success rates.",
-      name: "Dr. Lisa Thompson",
-      title: "Transplant Surgeon",
-      org: "University Medical Center",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2Fcf4e58ef984543b58df3e13a88ca2ddb?format=webp&width=200",
-    },
-    {
-      text: "OrganLink's workflow streamlines our processes and improves patient outcomes. A game-changer for our hospital.",
-      name: "Dr. Robert Kumar",
-      title: "Head of Organ Transplantation",
-      org: "Metropolitan Hospital",
-      photo:
-        "https://cdn.builder.io/api/v1/image/assets%2F405002c998c64b82876ceae617ac1008%2Fd7c818018c9b40e2a1e5eaf655a1a32a?format=webp&width=200",
-    },
-  ];
-
-  const slides = chunk(testimonials, 3);
-  const [index, setIndex] = useState(0);
-  const timerRef = useRef<number | null>(null);
-  
-  useEffect(() => {
-    const next = () => setIndex((i) => (i + 1) % slides.length);
-    timerRef.current = window.setInterval(next, 4000);
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-    };
-  }, [slides.length]);
-
-  const onMouseEnter = () => {
-    if (timerRef.current) window.clearInterval(timerRef.current);
-  };
-  const onMouseLeave = () => {
-    timerRef.current = window.setInterval(
-      () => setIndex((i) => (i + 1) % slides.length),
-      4000,
-    );
-  };
-
-  return (
-    <div className="max-w-7xl mx-auto">
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={staggerChildren}
-        className="relative"
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      >
-        <div className="overflow-hidden rounded-3xl">
-          <div
-            className="flex transition-transform duration-1000 ease-in-out"
-            style={{
-              transform: `translateX(-${index * 100}%)`,
-            }}
-          >
-            {slides.map((group, gi) => (
-              <div
-                key={gi}
-                className="w-full shrink-0 p-4"
-                style={{ minWidth: '100%' }}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {group.map((testimonial, i) => (
-                  <motion.div key={testimonial.name + i} variants={fadeInScale}>
-                    <Card className="h-full border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50/30 overflow-hidden group">
-                      <CardContent className="p-8 relative">
-                        <div className="absolute top-4 right-4 text-blue-200 opacity-20 group-hover:opacity-30 transition-opacity">
-                          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-                          </svg>
-                        </div>
-                        
-                        <div className="mb-6">
-                          <div className="flex items-center space-x-1 mb-4">
-                            {[...Array(5)].map((_, star) => (
-                              <svg key={star} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
-                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                              </svg>
-                            ))}
-                          </div>
-                          <p className="text-gray-700 text-lg leading-relaxed mb-6 italic">
-                            "{testimonial.text}"
-                          </p>
-                        </div>
-                        
-                        <div className="flex items-center space-x-4">
-                          <div className="relative">
-                            <img
-                              src={testimonial.photo}
-                              alt={testimonial.name}
-                              className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
-                            />
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
-                              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                              </svg>
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-bold text-gray-900 text-lg">
-                              {testimonial.name}
-                            </div>
-                            <div className="text-sm text-blue-600 font-medium">
-                              {testimonial.title}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {testimonial.org}
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Navigation dots */}
-        <div className="flex items-center justify-center mt-8 space-x-3">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                i === index 
-                  ? "bg-gradient-to-r from-blue-500 to-green-500 shadow-lg" 
-                  : "bg-gray-300 hover:bg-gray-400"
-              }`}
-              onClick={() => setIndex(i)}
-            />
-          ))}
-        </div>
-      </motion.div>
-    </div>
   );
 }
 
@@ -392,21 +177,21 @@ function ContactForm() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    
+
     // Basic validation
     if (!name.trim() || !email.trim() || !institute.trim() || !message.trim()) {
       setError('Please fill in all required fields.');
       return;
     }
-    
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('Please enter a valid email address.');
       return;
     }
-    
+
     setSubmitting(true);
     setError("");
-    
+
     try {
       const formData = new FormData();
       formData.append('access_key', 'fb6147a3-d4a0-41d5-ada5-64b22431e33d');
@@ -422,17 +207,17 @@ function ContactForm() {
       formData.append('original_message', message.trim());
       // Honeypot field for spam protection
       formData.append('botcheck', '');
-      
+
       console.log('Sending form submission...');
-      
+
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
       });
-      
+
       const result = await response.json();
       console.log('Web3Forms response:', result);
-      
+
       if (result.success) {
         setSubmitted(true);
         setName("");
@@ -448,9 +233,9 @@ function ContactForm() {
       }
     } catch (err: any) {
       console.error('Form submission error:', err);
-      
+
       let errorMessage = 'Failed to send message. Please try again.';
-      
+
       if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
         errorMessage = 'Network connection failed. Please check your internet connection and try again.';
       } else if (err.message.includes('CORS')) {
@@ -458,7 +243,7 @@ function ContactForm() {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
     } finally {
       setSubmitting(false);
@@ -480,10 +265,10 @@ function ContactForm() {
           {error}
         </div>
       )}
-      
+
       {/* Honeypot field - hidden from users */}
       <input type="text" name="botcheck" className="hidden" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="name">Name *</Label>
@@ -545,25 +330,149 @@ function ContactForm() {
   );
 }
 
+function TestimonialsCarousel() {
+  const testimonials = [
+    {
+      name: "Dr. Sarah Chen",
+      role: "Chief of Surgery",
+      hospital: "Metropolitan General",
+      content: "OrganLink has revolutionized our transplant coordination. The AI matching is incredibly accurate and saves vital time.",
+      image: "https://randomuser.me/api/portraits/women/1.jpg"
+    },
+    {
+      name: "James Wilson",
+      role: "Director",
+      hospital: "National Organ Network",
+      content: "The transparency provided by the blockchain integration gives all stakeholders complete confidence in the system.",
+      image: "https://randomuser.me/api/portraits/men/2.jpg"
+    },
+    {
+      name: "Dr. Emily Rodriguez",
+      role: "Transplant Coordinator",
+      hospital: "City Medical Center",
+      content: "Real-time notifications and secure document handling have streamlined our workflow significantly.",
+      image: "https://randomuser.me/api/portraits/women/3.jpg"
+    },
+    {
+      name: "Michael Chang",
+      role: "Administrator",
+      hospital: "Westside Hospital",
+      content: "Implementation was smooth, and the impact on patient outcomes has been immediate and positive.",
+      image: "https://randomuser.me/api/portraits/men/4.jpg"
+    },
+    {
+      name: "Dr. Robert Park",
+      role: "Head of Immunology",
+      hospital: "University Health",
+      content: "The automated compatibility scoring helps us make faster, more informed decisions for our patients.",
+      image: "https://randomuser.me/api/portraits/men/5.jpg"
+    }
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1);
+      } else {
+        setItemsPerPage(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto-advance
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => {
+        const maxIndex = testimonials.length - itemsPerPage;
+        return prev >= maxIndex ? 0 : prev + 1;
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [itemsPerPage]);
+
+  return (
+    <div className="relative max-w-6xl mx-auto">
+      <div className="overflow-hidden">
+        <motion.div
+          className="flex gap-8"
+          animate={{
+            x: `-${currentIndex * (100 / itemsPerPage)}%`
+          }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+          {testimonials.map((testimonial, index) => (
+            <motion.div
+              key={index}
+              className={`flex-shrink-0 ${itemsPerPage === 1 ? 'w-full' : 'w-[calc(33.333%-1.33rem)]'}`}
+            >
+              <Card className="h-full border-0 shadow-lg bg-white">
+                <CardContent className="p-8 flex flex-col h-full">
+                  <div className="mb-6">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span key={star} className="text-yellow-400 text-lg">★</span>
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-8 flex-grow italic">"{testimonial.content}"</p>
+                  <div className="flex items-center mt-auto">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="w-12 h-12 rounded-full object-cover mr-4"
+                    />
+                    <div>
+                      <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-500">{testimonial.role}</p>
+                      <p className="text-xs text-medical-600">{testimonial.hospital}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Navigation Dots */}
+      <div className="flex justify-center mt-8 space-x-2">
+        {Array.from({ length: testimonials.length - itemsPerPage + 1 }).map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex === idx ? "bg-medical-600 w-6" : "bg-gray-300"
+              }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     // Set public page title
     setPortalTitle("PUBLIC");
-    
+
     // Simulate loading time for the public page
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000); // 2 seconds loading time
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   if (isLoading) {
     return <PublicPageSkeleton />;
   }
-  
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -573,7 +482,7 @@ export default function Index() {
           <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-to-br from-blue-100 to-green-100 rounded-full opacity-20 blur-3xl"></div>
           <div className="absolute bottom-20 right-32 w-96 h-96 bg-gradient-to-br from-green-100 to-blue-100 rounded-full opacity-10 blur-3xl"></div>
         </div>
-        
+
         <div className="container relative mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
             <motion.div
@@ -583,7 +492,7 @@ export default function Index() {
               className="space-y-8"
             >
               <div className="space-y-6">
-                <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight break-words">
                   <span className="text-gray-900">Revolutionizing</span>
                   <br />
                   <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
@@ -592,13 +501,13 @@ export default function Index() {
                   <br />
                   <span className="text-gray-900">Through Technology</span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-2xl">
-                  Secure, transparent, and efficient platform connecting hospitals, 
-                  organizations, and lives through blockchain-powered organ matching 
+                <p className="text-lg sm:text-xl md:text-2xl text-gray-600 leading-relaxed max-w-2xl break-words">
+                  Secure, transparent, and efficient platform connecting hospitals,
+                  organizations, and lives through blockchain-powered organ matching
                   and allocation systems.
                 </p>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <motion.a
                   whileHover={{ scale: 1.05 }}
@@ -619,7 +528,7 @@ export default function Index() {
                 </motion.a>
               </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -702,17 +611,17 @@ export default function Index() {
                   </span>
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                  Cutting-Edge Technology for 
+                  Cutting-Edge Technology for
                   <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                     Life-Saving Solutions
                   </span>
                 </h2>
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  Our platform combines blockchain security, AI matching, and real-time 
+                  Our platform combines blockchain security, AI matching, and real-time
                   coordination to revolutionize organ donation and transplantation.
                 </p>
               </div>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center">
@@ -723,7 +632,7 @@ export default function Index() {
                     <p className="text-gray-600">Immutable records and cryptographic security ensure data integrity and patient privacy.</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center">
                     <Brain className="h-6 w-6 text-white" />
@@ -733,7 +642,7 @@ export default function Index() {
                     <p className="text-gray-600">Advanced algorithms analyze compatibility factors to find optimal donor-recipient matches.</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center">
                     <Zap className="h-6 w-6 text-white" />
@@ -745,7 +654,7 @@ export default function Index() {
                 </div>
               </div>
             </MotionSection>
-            
+
             <MotionSection delay={0.2} className="relative">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-500 rounded-3xl blur-2xl opacity-20 transform -rotate-6"></div>
@@ -769,27 +678,27 @@ export default function Index() {
       </section>
 
       {/* Features Section */}
-      <section className="py-32 bg-white" id="features">
+      <section className="py-16 md:py-32 bg-white" id="features">
         <div className="container mx-auto px-6">
-          <MotionSection className="text-center mb-20">
+          <MotionSection className="text-center mb-12 md:mb-20">
             <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-green-100 rounded-full mb-6">
               <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                 Our Features
               </span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Cutting-Edge Technology for 
+            <h2 className="text-3xl md:text-6xl font-bold text-gray-900 mb-6 md:mb-8 leading-tight">
+              Cutting-Edge Technology for
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                 Life-Saving Solutions
               </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Our platform combines blockchain security, AI matching, and real-time coordination 
+            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              Our platform combines blockchain security, AI matching, and real-time coordination
               to revolutionize organ donation and transplantation.
             </p>
           </MotionSection>
 
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
@@ -808,7 +717,7 @@ export default function Index() {
                       AI-Powered Matching
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Advanced algorithms analyze compatibility factors to find 
+                      Advanced algorithms analyze compatibility factors to find
                       optimal donor-patient matches across our global network.
                     </p>
                   </CardContent>
@@ -828,7 +737,7 @@ export default function Index() {
                       Blockchain Security
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Immutable records on Ethereum Sepolia ensure complete 
+                      Immutable records on Ethereum Sepolia ensure complete
                       transparency and tamper-proof documentation of all transactions.
                     </p>
                   </CardContent>
@@ -848,7 +757,7 @@ export default function Index() {
                       OCR Verification
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Signature verification using Tesseract.js OCR technology 
+                      Signature verification using Tesseract.js OCR technology
                       ensures authentic consent and prevents fraud.
                     </p>
                   </CardContent>
@@ -868,7 +777,7 @@ export default function Index() {
                       IPFS Storage
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Decentralized storage via Pinata API ensures documents are 
+                      Decentralized storage via Pinata API ensures documents are
                       permanent, accessible, and distributed globally.
                     </p>
                   </CardContent>
@@ -888,7 +797,7 @@ export default function Index() {
                       Real-time Notifications
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Socket.IO powered instant alerts notify hospitals when matches 
+                      Socket.IO powered instant alerts notify hospitals when matches
                       are found, reducing critical response times.
                     </p>
                   </CardContent>
@@ -908,7 +817,7 @@ export default function Index() {
                       Global Network
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Connect hospitals and organizations worldwide for cross-border 
+                      Connect hospitals and organizations worldwide for cross-border
                       organ matching and collaborative healthcare.
                     </p>
                   </CardContent>
@@ -920,9 +829,9 @@ export default function Index() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-gray-50" id="how-it-works">
+      <section className="py-16 md:py-20 bg-gray-50" id="how-it-works">
         <div className="container mx-auto px-4">
-          <MotionSection className="text-center mb-16">
+          <MotionSection className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
               How OrganLink Works
             </h2>
@@ -995,7 +904,7 @@ export default function Index() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-32 bg-white" id="testimonials">
+      <section className="py-16 md:py-32 bg-white" id="testimonials">
         <div className="container mx-auto px-6">
           <MotionSection className="text-center mb-20">
             <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-green-100 rounded-full mb-6">
@@ -1004,13 +913,13 @@ export default function Index() {
               </span>
             </div>
             <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              What Our 
+              What Our
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                 Partners Say
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Trusted by hospitals and organizations worldwide for secure, 
+              Trusted by hospitals and organizations worldwide for secure,
               efficient organ matching and allocation.
             </p>
           </MotionSection>
@@ -1186,6 +1095,199 @@ export default function Index() {
           </div>
         </div>
       </section>
-    </Layout>
+
+      {/* Testimonials Section */}
+      <section className="py-32 bg-white" id="testimonials">
+        <div className="container mx-auto px-6">
+          <MotionSection className="text-center mb-20">
+            <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-green-100 rounded-full mb-6">
+              <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                Testimonials
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+              What Our
+              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                Partners Say
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              Trusted by hospitals and organizations worldwide for secure,
+              efficient organ matching and allocation.
+            </p>
+          </MotionSection>
+          <TestimonialsCarousel />
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-gray-50" id="faqs">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Everything you need to know about OrganLink.
+            </p>
+          </div>
+          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1" className="px-6">
+                <AccordionTrigger className="py-5 text-left text-base">
+                  How is patient data secured?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 leading-relaxed">
+                  We use blockchain for immutable records and IPFS for
+                  decentralized document storage. Encryption and strict access
+                  controls keep data private while enabling necessary medical
+                  access.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2" className="px-6">
+                <AccordionTrigger className="py-5 text-left text-base">
+                  What is the policy voting system?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 leading-relaxed">
+                  Organizations propose and vote on policies. Once approved,
+                  policies are transparently recorded and enforced across the
+                  network.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-3" className="px-6">
+                <AccordionTrigger className="py-5 text-left text-base">
+                  How does AI matching work?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 leading-relaxed">
+                  Our algorithms consider blood group, tissue type, urgency,
+                  distance and more to recommend optimal donor–patient matches.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-20 bg-white" id="contact">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              Get in Touch
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Ready to revolutionize organ transplant matching at your
+              institution?
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="space-y-6">
+              <div className="flex items-start space-x-3">
+                <Mail className="h-5 w-5 text-medical-600 mt-1" />
+                <div>
+                  <div className="text-sm text-gray-500">Email</div>
+                  <div className="font-medium text-gray-900">
+                    support@organlink.org
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Phone className="h-5 w-5 text-medical-600 mt-1" />
+                <div>
+                  <div className="text-sm text-gray-500">Phone</div>
+                  <div className="font-medium text-gray-900">
+                    +1 (800) ORGAN
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <MapPin className="h-5 w-5 text-medical-600 mt-1" />
+                <div>
+                  <div className="text-sm text-gray-500">Location</div>
+                  <div className="font-medium text-gray-900">
+                    Healthcare Innovation Hub
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
+      {/* Portal Access Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              Access Your Portal
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Secure, role-based access for hospitals, organizations, and
+              administrators.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-medical-200">
+              <CardContent className="p-8 text-center">
+                <div className="bg-medical-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                  <Activity className="h-8 w-8 text-medical-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Hospital Portal
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Register donors and patients, manage AI matching, and receive
+                  real-time notifications.
+                </p>
+                <Button className="w-full" asChild>
+                  <Link to="/hospital/login">Access Hospital Portal</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-medical-200">
+              <CardContent className="p-8 text-center">
+                <div className="bg-medical-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                  <Users className="h-8 w-8 text-medical-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Organization Portal
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Propose policies, participate in voting, and manage
+                  organizational guidelines.
+                </p>
+                <Button className="w-full" asChild>
+                  <Link to="/organization/login">
+                    Access Organization Portal
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-medical-200">
+              <CardContent className="p-8 text-center">
+                <div className="bg-medical-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                  <Award className="h-8 w-8 text-medical-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Admin Portal
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Manage hospitals, organizations, monitor blockchain logs, and
+                  system metrics.
+                </p>
+                <Button className="w-full" asChild>
+                  <Link to="/admin/login">Access Admin Portal</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+    </Layout >
   );
 }

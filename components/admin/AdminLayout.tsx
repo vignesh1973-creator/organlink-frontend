@@ -1,12 +1,13 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bell, LogOut, User } from "lucide-react";
+import { Bell, LogOut, User, Menu } from "lucide-react";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import AdminSidebar from "./AdminSidebar";
 import NotificationDropdown from "./NotificationDropdown";
 import { setPortalTitle } from "@/utils/pageTitle";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -23,6 +24,7 @@ export default function AdminLayout({
   const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -53,19 +55,35 @@ export default function AdminLayout({
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-gray-50">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+      {/* Sidebar - Desktop */}
+      <div className="hidden md:block w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
         <AdminSidebar />
       </div>
+
+      {/* Mobile Sidebar Sheet */}
+      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+        <SheetContent side="left" className="w-72 p-0">
+          <AdminSidebar onNavigate={() => setMobileSidebarOpen(false)} />
+        </SheetContent>
+      </Sheet>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header */}
         <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-600 mt-1 hidden sm:block">{subtitle}</p>
+            <div className="flex items-center gap-3">
+              <button
+                className="md:hidden p-2 rounded-md border border-gray-200"
+                aria-label="Open menu"
+                onClick={() => setMobileSidebarOpen(true)}
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{title}</h1>
+                <p className="text-sm text-gray-600 mt-1 hidden sm:block">{subtitle}</p>
+              </div>
             </div>
 
             <div className="flex items-center space-x-2 sm:space-x-4">

@@ -25,6 +25,7 @@ import {
   Phone,
   Mail,
   UserPlus,
+  Info,
 } from "lucide-react";
 import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -122,27 +123,27 @@ export default function RegisterDonor() {
   const validateForm = () => {
     const requiredFields = ['full_name', 'age', 'gender', 'blood_type', 'contact_phone'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof DonorFormData]);
-    
+
     if (missingFields.length > 0) {
       showError(`Please fill in required fields: ${missingFields.join(', ')}`);
       return false;
     }
-    
+
     if (formData.age < 18 || formData.age > 80) {
       showError('Donor age must be between 18 and 80 years');
       return false;
     }
-    
+
     if (formData.organs_to_donate.length === 0) {
       showError('Please select at least one organ to donate');
       return false;
     }
-    
+
     if (!signatureFile) {
       showError('Please upload a signature image');
       return false;
     }
-    
+
     return true;
   };
 
@@ -178,7 +179,7 @@ export default function RegisterDonor() {
       let result: any = null;
       try {
         result = await response.json();
-      } catch {}
+      } catch { }
       if (!response.ok) {
         const serverMsg =
           result?.error || `Upload failed with status ${response.status}`;
@@ -283,7 +284,7 @@ export default function RegisterDonor() {
       let result: any = null;
       try {
         result = await response.json();
-      } catch {}
+      } catch { }
       if (!response.ok) {
         const serverMsg =
           result?.error ||
@@ -314,21 +315,21 @@ export default function RegisterDonor() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!validateForm()) {
       return;
     }
-    
+
     // Process full registration with signature
     setIsSubmitting(true);
 
     try {
       const token = localStorage.getItem("hospital_token");
-      
+
       // Create FormData to include file upload
       const formDataToSend = new FormData();
-      
+
       // Add all form fields
       Object.entries(formData).forEach(([key, value]) => {
         if (Array.isArray(value)) {
@@ -337,23 +338,23 @@ export default function RegisterDonor() {
           formDataToSend.append(key, value.toString());
         }
       });
-      
+
       // Add calculated fields for backend compatibility
       const birthYear = new Date().getFullYear() - formData.age;
       formDataToSend.append('date_of_birth', `${birthYear}-01-01`); // Approximate DOB
       formDataToSend.append('national_id', `DON_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`); // Generated ID
-      
+
       // Add signature file and verification type
-      formDataToSend.append('signature', signatureFile);
+      formDataToSend.append('signature', signatureFile!);
       formDataToSend.append('verification_type', verificationType);
-      
+
       // Add Aadhaar last 4 digits if Aadhaar verification
       if (verificationType === 'aadhaar') {
         formDataToSend.append('aadhaar_last4', aadhaarLast4);
       }
-      
+
       console.log(`Submitting donor registration with ${verificationType}...`);
-      
+
       const response = await fetch("/api/hospital/donors/register", {
         method: "POST",
         headers: {
@@ -364,7 +365,7 @@ export default function RegisterDonor() {
       });
 
       const result = await response.json();
-      
+
       if (!response.ok) {
         if (result.details) {
           console.log('OCR verification details:', result.details);
@@ -439,9 +440,8 @@ export default function RegisterDonor() {
             </div>
             <div className="hidden sm:flex flex-1 h-0.5 bg-gray-200 max-w-32"></div>
             <div className={`flex items-center space-x-2 ${currentStep >= 2 ? "text-green-600" : "text-gray-400"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                currentStep >= 2 ? "bg-green-600 text-white" : "bg-gray-200"
-              }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 2 ? "bg-green-600 text-white" : "bg-gray-200"
+                }`}>
                 <CheckCircle className="h-4 w-4" />
               </div>
               <span className="text-xs sm:text-sm font-medium">Registration Complete</span>
@@ -458,7 +458,7 @@ export default function RegisterDonor() {
                 Donor Information
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pb-0 md:pb-4">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Personal Information */}
@@ -510,7 +510,7 @@ export default function RegisterDonor() {
                           <SelectTrigger className="mt-1">
                             <SelectValue placeholder="Select gender" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent side="bottom">
                             <SelectItem value="Male">Male</SelectItem>
                             <SelectItem value="Female">Female</SelectItem>
                             <SelectItem value="Other">Other</SelectItem>
@@ -530,7 +530,7 @@ export default function RegisterDonor() {
                         <SelectTrigger className="mt-1">
                           <SelectValue placeholder="Select blood type" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent side="bottom">
                           {bloodTypes.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
@@ -648,9 +648,9 @@ export default function RegisterDonor() {
                     {/* Document Upload with Type Selection */}
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="signature">Upload Document *</Label>
-                        <div className="flex gap-4 mt-2 mb-2">
-                          <label className="flex items-center space-x-2 cursor-pointer">
+                        <Label htmlFor="signature" className="text-base font-medium text-gray-900">Upload Document *</Label>
+                        <div className="flex gap-4 mt-3 mb-4">
+                          <label className="flex items-center space-x-2 cursor-pointer p-2 rounded-md hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
                             <input
                               type="radio"
                               name="verificationType"
@@ -660,27 +660,27 @@ export default function RegisterDonor() {
                                 setVerificationType(e.target.value as 'signature' | 'aadhaar');
                                 setAadhaarLast4(''); // Clear Aadhaar field
                               }}
-                              className="w-4 h-4 text-medical-600"
+                              className="w-4 h-4 text-medical-600 focus:ring-medical-500"
                             />
-                            <span className="text-sm font-medium">Signature</span>
+                            <span className="text-sm font-medium text-gray-700">Signature</span>
                           </label>
-                          <label className="flex items-center space-x-2 cursor-pointer">
+                          <label className="flex items-center space-x-2 cursor-pointer p-2 rounded-md hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
                             <input
                               type="radio"
                               name="verificationType"
                               value="aadhaar"
                               checked={verificationType === 'aadhaar'}
                               onChange={(e) => setVerificationType(e.target.value as 'signature' | 'aadhaar')}
-                              className="w-4 h-4 text-medical-600"
+                              className="w-4 h-4 text-medical-600 focus:ring-medical-500"
                             />
-                            <span className="text-sm font-medium">Aadhaar Card</span>
+                            <span className="text-sm font-medium text-gray-700">Aadhaar Card</span>
                           </label>
                         </div>
 
                         {/* Aadhaar Last 4 Digits (only show when Aadhaar selected) */}
                         {verificationType === 'aadhaar' && (
-                          <div className="mb-3">
-                            <Label htmlFor="aadhaar_last4">Last 4 Digits of Aadhaar *</Label>
+                          <div className="mb-4 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <Label htmlFor="aadhaar_last4" className="text-blue-900">Last 4 Digits of Aadhaar *</Label>
                             <Input
                               id="aadhaar_last4"
                               type="text"
@@ -690,49 +690,93 @@ export default function RegisterDonor() {
                               onChange={(e) => setAadhaarLast4(e.target.value.replace(/\D/g, ''))}
                               placeholder="Enter last 4 digits (e.g., 7481)"
                               required={verificationType === 'aadhaar'}
-                              className="mt-1"
+                              className="mt-2 bg-white"
                             />
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-blue-700 mt-2 flex items-center">
+                              <Info className="h-3 w-3 mr-1" />
                               We'll verify this matches your Aadhaar card
                             </p>
                           </div>
                         )}
 
-                        <Input
-                          id="signature"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleSignatureUpload}
-                          required
-                          className="mt-1"
-                        />
-                        {signaturePreview && (
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-600 mb-1">Preview:</p>
-                            <img
-                              src={signaturePreview}
-                              alt={verificationType === 'signature' ? 'Signature preview' : 'Aadhaar preview'}
-                              className="max-w-xs max-h-32 object-contain border border-gray-300 rounded"
-                            />
-                          </div>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          {verificationType === 'signature'
-                            ? '📝 Upload a clear signature image (for demo/testing)'
-                            : '🪪 Upload Aadhaar card (front side) for verification'}
-                        </p>
+                        <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 transition-all hover:border-medical-400 hover:bg-blue-50/30 group">
+                          {!signaturePreview ? (
+                            <div className="text-center">
+                              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <Upload className="h-8 w-8" />
+                              </div>
+                              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                {verificationType === 'signature'
+                                  ? 'Upload Donor Consent'
+                                  : 'Upload Aadhaar Card'}
+                              </h4>
+                              <p className="text-gray-500 mb-6 max-w-sm mx-auto text-sm leading-relaxed">
+                                {verificationType === 'signature'
+                                  ? 'Upload a signed consent form or authorization letter'
+                                  : 'Upload a clear scan or photo of donor\'s Aadhaar card'}
+                              </p>
+
+                              <Input
+                                id="signature"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleSignatureUpload}
+                                required
+                                className="hidden"
+                              />
+                              <label htmlFor="signature">
+                                <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-medical-600 text-primary-foreground hover:bg-medical-700 h-10 px-4 py-2 cursor-pointer shadow-md hover:shadow-lg transform active:scale-95 duration-200">
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  {verificationType === 'signature' ? 'Choose Signature File' : 'Choose Aadhaar Card'}
+                                </div>
+                              </label>
+                            </div>
+                          ) : (
+                            <div className="text-center">
+                              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="h-8 w-8" />
+                              </div>
+                              <h4 className="text-lg font-semibold text-gray-900 mb-2">Document Ready</h4>
+                              <p className="text-gray-500 mb-4 text-sm truncate max-w-xs mx-auto">
+                                {signatureFile?.name}
+                              </p>
+                              <div className="mb-6 relative inline-block group-hover:shadow-md transition-shadow rounded-lg overflow-hidden">
+                                <img
+                                  src={signaturePreview}
+                                  alt="Preview"
+                                  className="max-w-xs max-h-48 object-contain bg-white"
+                                />
+                              </div>
+                              <div>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setSignatureFile(null);
+                                    setSignaturePreview(null);
+                                  }}
+                                  className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                >
+                                  <FileText className="h-4 w-4 mr-2" />
+                                  Change File
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-6">
+                <div className="flex justify-center pt-6 border-t border-gray-100 mb-4 md:mb-8">
                   <Button
                     type="submit"
                     disabled={
                       isSubmitting || formData.organs_to_donate.length === 0
                     }
-                    className="bg-medical-600 hover:bg-medical-700"
+                    className="bg-medical-600 hover:bg-medical-700 w-full sm:w-auto shadow-lg hover:shadow-xl transition-all whitespace-normal h-auto py-3"
+                    size="lg"
                   >
                     {isSubmitting ? (
                       <>
@@ -740,7 +784,10 @@ export default function RegisterDonor() {
                         Registering...
                       </>
                     ) : (
-                      "Register Donor with Blockchain Verification"
+                      <>
+                        <span className="hidden sm:inline">Register Donor with Blockchain Verification</span>
+                        <span className="sm:hidden">Register & Verify</span>
+                      </>
                     )}
                   </Button>
                 </div>
@@ -762,7 +809,7 @@ export default function RegisterDonor() {
             <CardContent className="space-y-6">
               <div className="text-center space-y-6">
                 <CheckCircle className="h-20 w-20 text-green-600 mx-auto" />
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     Donor Successfully Registered!

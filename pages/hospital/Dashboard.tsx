@@ -196,7 +196,7 @@ export default function HospitalDashboard() {
           </Card>
 
           {/* Verified Records */}
-          <Card>
+          < Card >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -216,10 +216,10 @@ export default function HospitalDashboard() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card >
 
           {/* Urgent Cases */}
-          <Card>
+          < Card >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -238,13 +238,13 @@ export default function HospitalDashboard() {
                 </div>
               </div>
             </CardContent>
-          </Card>
-        </div>
+          </Card >
+        </div >
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        < div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" >
           {/* Quick Actions Card */}
-          <Card>
+          < Card >
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Activity className="h-5 w-5 mr-2" />
@@ -291,10 +291,10 @@ export default function HospitalDashboard() {
                 </Link>
               </div>
             </CardContent>
-          </Card>
+          </Card >
 
           {/* Matching Status */}
-          <Card>
+          < Card >
             <CardHeader>
               <CardTitle className="flex items-center">
                 <TrendingUp className="h-5 w-5 mr-2" />
@@ -333,13 +333,13 @@ export default function HospitalDashboard() {
                 </Link>
               </div>
             </CardContent>
-          </Card>
-        </div>
+          </Card >
+        </div >
 
         {/* Recent Activities & Distribution Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        < div className="grid grid-cols-1 lg:grid-cols-2 gap-6" >
           {/* Recent Activities */}
-          <Card>
+          < Card >
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Clock className="h-5 w-5 mr-2" />
@@ -355,19 +355,17 @@ export default function HospitalDashboard() {
                       className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
                     >
                       <div
-                        className={`p-2 rounded-lg ${
-                          activity.type === "patient"
+                        className={`p-2 rounded-lg ${activity.type === "patient"
                             ? "bg-blue-100"
                             : "bg-green-100"
-                        }`}
+                          }`}
                       >
                         {activity.type === "patient" ? (
                           <Users
-                            className={`h-4 w-4 ${
-                              activity.type === "patient"
+                            className={`h-4 w-4 ${activity.type === "patient"
                                 ? "text-blue-600"
                                 : "text-green-600"
-                            }`}
+                              }`}
                           />
                         ) : (
                           <Heart className="h-4 w-4 text-green-600" />
@@ -391,10 +389,10 @@ export default function HospitalDashboard() {
                 )}
               </div>
             </CardContent>
-          </Card>
+          </Card >
 
           {/* Blood Type Distribution */}
-          <Card>
+          < Card >
             <CardHeader>
               <CardTitle className="flex items-center">
                 <PieChart className="h-5 w-5 mr-2" />
@@ -430,9 +428,9 @@ export default function HospitalDashboard() {
                 ))}
               </div>
             </CardContent>
-          </Card>
-        </div>
-      </div>
-    </HospitalLayout>
+          </Card >
+        </div >
+      </div >
+    </HospitalLayout >
   );
 }

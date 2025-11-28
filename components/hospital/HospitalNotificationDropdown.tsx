@@ -138,7 +138,7 @@ export default function HospitalNotificationDropdown({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-full right-0 mt-2 w-80 z-50">
+    <div className="fixed left-4 right-4 top-20 z-50 md:absolute md:top-full md:right-0 md:left-auto md:w-80 md:mt-2">
       <Card ref={dropdownRef} className="shadow-lg border-gray-200">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -193,9 +193,9 @@ export default function HospitalNotificationDropdown({
                       className={cn(
                         "p-4 hover:bg-gray-50 transition-colors cursor-pointer relative",
                         !notification.is_read &&
-                          "bg-blue-50 border-l-4 border-l-blue-500",
+                        "bg-blue-50 border-l-4 border-l-blue-500",
                         isSelected &&
-                          "ring-1 ring-medical-500 bg-medical-50/60",
+                        "ring-1 ring-medical-500 bg-medical-50/60",
                       )}
                       onClick={() => {
                         setSelectedNotificationId(notification.notification_id);
@@ -215,7 +215,7 @@ export default function HospitalNotificationDropdown({
                               className={cn(
                                 "text-sm font-medium text-gray-900 truncate",
                                 (!notification.is_read || isSelected) &&
-                                  "font-semibold",
+                                "font-semibold",
                               )}
                             >
                               {notification.title}
@@ -328,15 +328,15 @@ export default function HospitalNotificationDropdown({
                   if (!selectedNotification.is_read) {
                     await markAsRead(selectedNotification.notification_id);
                   }
-                  
+
                   onClose();
-                  
+
                   // Route based on notification type
                   // organ_request = Incoming (donor hospital receiving request)
                   // request_response/match_response = My Requests (patient hospital receiving response)
                   // internal_match = My Requests (same hospital match)
                   const type = selectedNotification.type;
-                  
+
                   if (type === "organ_request" || type === "organ_match") {
                     // Donor hospital - view incoming request
                     navigate("/hospital/ai-matching?tab=incoming");

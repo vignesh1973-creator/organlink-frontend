@@ -43,12 +43,12 @@ interface DataTableProps {
     label: string;
     onClick: (row: any) => void;
     variant?:
-      | "default"
-      | "destructive"
-      | "outline"
-      | "secondary"
-      | "ghost"
-      | "link";
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   }[];
   pagination?: {
     page: number;
@@ -164,10 +164,11 @@ export default function DataTable({
         </CardHeader>
       </Card>
 
-      {/* Table */}
+      {/* Table / Card View */}
       <Card>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
@@ -237,6 +238,53 @@ export default function DataTable({
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4 p-4">
+            {data.length === 0 ? (
+              <div className="text-center text-gray-500 py-8">
+                No data available
+              </div>
+            ) : (
+              data.map((row, index) => (
+                <div
+                  key={index}
+                  className={`bg-white border rounded-lg p-4 space-y-3 shadow-sm ${onRowClick ? "cursor-pointer active:bg-gray-50" : ""}`}
+                  onClick={() => onRowClick?.(row)}
+                >
+                  {columns.map((column) => (
+                    <div key={column.key} className="flex justify-between items-start border-b border-gray-50 last:border-0 pb-2 last:pb-0">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1">
+                        {column.label}
+                      </span>
+                      <div className="text-sm text-gray-900 text-right ml-4">
+                        {column.render
+                          ? column.render(row[column.key], row)
+                          : row[column.key]}
+                      </div>
+                    </div>
+                  ))}
+                  {actions.length > 0 && (
+                    <div className="pt-3 flex justify-end space-x-2 border-t border-gray-100 mt-2">
+                      {actions.map((action, actionIndex) => (
+                        <Button
+                          key={actionIndex}
+                          size="sm"
+                          variant={action.variant || "outline"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            action.onClick(row);
+                          }}
+                        >
+                          {action.label}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>

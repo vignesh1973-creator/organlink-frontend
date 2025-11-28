@@ -54,7 +54,7 @@ export default function HospitalLayout({
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-50">
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-gray-50">
       {/* Sidebar - desktop only */}
       <div className="hidden md:block w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
         <HospitalSidebar />
@@ -85,7 +85,7 @@ export default function HospitalLayout({
                   {title}
                 </h1>
                 {subtitle && (
-                  <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
+                  <p className="hidden md:block text-sm text-gray-600 mt-1">{subtitle}</p>
                 )}
               </div>
             </div>

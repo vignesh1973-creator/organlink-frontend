@@ -161,7 +161,7 @@ export default function AIMatching() {
         const data = await response.json();
         // Only show patients in 'Waiting' status for AI matching (include all urgency levels)
         setPatients(
-          data.patients.filter((p: any) => 
+          data.patients.filter((p: any) =>
             (!p.status || p.status === "Waiting")
           ),
         );
@@ -370,8 +370,8 @@ export default function AIMatching() {
         },
         body: JSON.stringify({
           status: response === "accept" ? "accepted" : "rejected",
-          response_notes: response === "accept" 
-            ? "Request accepted by donor hospital" 
+          response_notes: response === "accept"
+            ? "Request accepted by donor hospital"
             : "Request declined by donor hospital",
         }),
       });
@@ -391,7 +391,7 @@ export default function AIMatching() {
         } else {
           showSuccess("Request declined. Patient is now available for other matches.");
         }
-        
+
         // Mark notification as read
         try {
           await fetch(`/api/hospital/notifications/${match.notification_id}/read`, {
@@ -403,7 +403,7 @@ export default function AIMatching() {
         } catch (err) {
           console.error("Failed to mark notification as read:", err);
         }
-        
+
         updateQueryParams({ request: null });
         setFocusedRequestId(null);
         await fetchIncomingMatches();
@@ -456,7 +456,7 @@ export default function AIMatching() {
               tab: next as "search" | "incoming" | "outgoing" | "received",
               request: next === "incoming" ? focusedRequestId : null,
             });
-            
+
             // Mark all notifications as read when viewing incoming tab
             if (next === "incoming" && incomingMatches.length > 0) {
               const token = localStorage.getItem("hospital_token");
@@ -474,7 +474,7 @@ export default function AIMatching() {
               // Refresh incoming matches to update is_read status
               await fetchIncomingMatches();
             }
-            
+
             // Mark all received requests as viewed when opening Received tab
             if (next === "received") {
               const token = localStorage.getItem("hospital_token");
@@ -492,9 +492,9 @@ export default function AIMatching() {
           }}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2">
-            <TabsTrigger value="search" className="text-xs sm:text-sm py-2 sm:py-3">Find Matches</TabsTrigger>
-            <TabsTrigger value="incoming" className="relative text-xs sm:text-sm py-2 sm:py-3">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 h-auto p-1">
+            <TabsTrigger value="search" className="text-xs sm:text-sm py-2 sm:py-3 whitespace-normal h-full">Find Matches</TabsTrigger>
+            <TabsTrigger value="incoming" className="relative text-xs sm:text-sm py-2 sm:py-3 whitespace-normal h-full">
               Incoming
               {incomingMatches.filter(m => !m.is_read).length > 0 && (
                 <Badge className="ml-1 sm:ml-2 bg-red-100 text-red-800 text-[10px] sm:text-xs px-1 sm:px-2 py-0">
@@ -502,7 +502,7 @@ export default function AIMatching() {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="outgoing" className="relative text-xs sm:text-sm py-2 sm:py-3">
+            <TabsTrigger value="outgoing" className="relative text-xs sm:text-sm py-2 sm:py-3 whitespace-normal h-full">
               <span className="hidden sm:inline">My Requests</span>
               <span className="sm:hidden">Requests</span>
               {outgoingRequests.filter((r: any) => r.status === 'pending').length > 0 && (
@@ -511,7 +511,7 @@ export default function AIMatching() {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="received" className="relative text-xs sm:text-sm py-2 sm:py-3">
+            <TabsTrigger value="received" className="relative text-xs sm:text-sm py-2 sm:py-3 whitespace-normal h-full">
               Received
               {receivedRequests.filter((r: any) => r.is_viewed === false).length > 0 && (
                 <Badge className="ml-1 sm:ml-2 bg-green-100 text-green-800 text-[10px] sm:text-xs px-1 sm:px-2 py-0">
@@ -537,11 +537,10 @@ export default function AIMatching() {
                     patients.map((patient) => (
                       <div
                         key={patient.patient_id}
-                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                          selectedPatient?.patient_id === patient.patient_id
-                            ? "border-medical-600 bg-medical-50"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
+                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${selectedPatient?.patient_id === patient.patient_id
+                          ? "border-medical-600 bg-medical-50"
+                          : "border-gray-200 hover:border-gray-300"
+                          }`}
                         onClick={() => searchMatches(patient)}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
@@ -764,7 +763,7 @@ export default function AIMatching() {
                                     </p>
                                   </div>
                                 )}
-                                
+
                                 {match.explanation && (
                                   <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded">
                                     <p className="text-xs text-blue-900 leading-relaxed">
@@ -845,7 +844,7 @@ export default function AIMatching() {
                     ? (metadata as any).matches
                     : [];
                   const primaryDonor = donorMatches[0];
-                  
+
                   // Extract organ needed from multiple sources
                   const organNeeded =
                     match.organ_type ||
@@ -855,20 +854,20 @@ export default function AIMatching() {
                     (metadata.patient_name && metadata.matches?.[0]?.organs_available?.[0]) ||
                     (donorMatches[0]?.organs_available?.[0]) ||
                     "Not specified";
-                    
+
                   const bloodType =
                     match.blood_type ||
                     metadata.blood_type ||
                     metadata.bloodType ||
                     "Not specified";
-                    
+
                   const urgencyLevel =
                     match.urgency_level ||
                     metadata.urgency_level ||
                     metadata.urgencyLevel ||
                     metadata.urgency ||
                     "Medium";
-                    
+
                   const createdAt =
                     match.created_at ||
                     metadata.created_at ||
@@ -964,21 +963,21 @@ export default function AIMatching() {
                                                 donor.organs_available,
                                               )
                                                 ? donor.organs_available.join(
-                                                    ", ",
-                                                  )
+                                                  ", ",
+                                                )
                                                 : "Organs not listed"}
                                             </p>
                                           </div>
                                           {typeof donor.match_score ===
                                             "number" && (
-                                            <Badge
-                                              className={getMatchScoreColor(
-                                                donor.match_score,
-                                              )}
-                                            >
-                                              {donor.match_score}% Match
-                                            </Badge>
-                                          )}
+                                              <Badge
+                                                className={getMatchScoreColor(
+                                                  donor.match_score,
+                                                )}
+                                              >
+                                                {donor.match_score}% Match
+                                              </Badge>
+                                            )}
                                         </div>
                                         {donor.explanation && (
                                           <p className="mt-2 text-xs text-gray-500 italic">
@@ -1150,14 +1149,14 @@ export default function AIMatching() {
                               <div>
                                 <Label className="text-xs text-gray-500">Sent</Label>
                                 <p className="text-sm font-medium text-gray-900">
-                                  {formatToIST(request.created_at)}
+                                  {request.created_at_ist || formatToIST(request.created_at)}
                                 </p>
                               </div>
-                              {request.updated_at && request.updated_at !== request.created_at && (
+                              {(request.updated_at_ist || (request.updated_at && request.updated_at !== request.created_at)) && (
                                 <div>
                                   <Label className="text-xs text-gray-500">Last Updated</Label>
                                   <p className="text-sm font-medium text-gray-900">
-                                    {formatToIST(request.updated_at)}
+                                    {request.updated_at_ist || formatToIST(request.updated_at)}
                                   </p>
                                 </div>
                               )}
@@ -1293,14 +1292,14 @@ export default function AIMatching() {
                                 <p className="text-sm">
                                   {request.created_at
                                     ? new Date(request.created_at).toLocaleString('en-IN', {
-                                        timeZone: 'Asia/Kolkata',
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        hour12: true
-                                      })
+                                      timeZone: 'Asia/Kolkata',
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: true
+                                    })
                                     : "Unknown"}
                                 </p>
                               </div>

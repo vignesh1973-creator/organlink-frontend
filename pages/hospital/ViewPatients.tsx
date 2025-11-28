@@ -76,6 +76,7 @@ interface Patient {
   status?: string;
   matched_donor_id?: string;
   matched_hospital_id?: string;
+  hospital_display_id?: number;
 }
 
 export default function ViewPatients() {
@@ -472,10 +473,10 @@ export default function ViewPatients() {
                 key={patient.id}
                 className="hover:shadow-md transition-shadow"
               >
-                <CardContent className="p-6">
+                <CardContent className="p-4 md:p-6">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
-                      <div className="flex items-center space-x-4 mb-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
                         <ProfileAvatar
                           photoBase64={patient.profile_photo}
                           gender={patient.gender}
@@ -487,46 +488,47 @@ export default function ViewPatients() {
                             {patient.full_name}
                           </h3>
                           <p className="text-sm text-gray-500">
-                            ID: {patient.patient_id} • Age: {patient.age} •{" "}
+                            ID: {patient.hospital_display_id ? `#${patient.hospital_display_id}` : patient.patient_id} • Age: {patient.age} •{" "}
                             {patient.gender}
                           </p>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge className={getStatusColor(patient.status)}>
-                            {getStatusIcon(patient.status)} {patient.status || "Waiting"}
-                          </Badge>
-                          <Badge
-                            className={getUrgencyColor(patient.urgency_level)}
-                          >
-                            {patient.urgency_level}
-                          </Badge>
-                          <Badge variant="outline">{patient.blood_type}</Badge>
-                          <Badge className="bg-blue-100 text-blue-800">
-                            {patient.organ_needed}
-                          </Badge>
-                          {patient.signature_verified && (
-                            <Badge className="bg-green-100 text-green-800">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Verified
-                            </Badge>
-                          )}
-                        </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <Badge className={getStatusColor(patient.status)}>
+                          {getStatusIcon(patient.status)} {patient.status || "Waiting"}
+                        </Badge>
+                        <Badge
+                          className={getUrgencyColor(patient.urgency_level)}
+                        >
+                          {patient.urgency_level}
+                        </Badge>
+                        <Badge variant="outline">{patient.blood_type}</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          {patient.organ_needed}
+                        </Badge>
+                        {patient.signature_verified && (
+                          <Badge className="bg-green-100 text-green-800">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Verified
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                         <div className="flex items-center text-gray-600">
-                          <Phone className="h-4 w-4 mr-2" />
-                          {patient.contact_phone}
+                          <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span className="truncate">{patient.contact_phone}</span>
                         </div>
                         {patient.contact_email && (
                           <div className="flex items-center text-gray-600">
-                            <Mail className="h-4 w-4 mr-2" />
-                            {patient.contact_email}
+                            <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">{patient.contact_email}</span>
                           </div>
                         )}
                         <div className="flex items-center text-gray-600">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Registered: {formatDate(patient.registration_date)}
+                          <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                          <span className="truncate">Reg: {formatDate(patient.registration_date)}</span>
                         </div>
                       </div>
 
@@ -541,12 +543,13 @@ export default function ViewPatients() {
 
                     </div>
 
-                    <div className="flex md:flex-col gap-2 md:space-y-2 md:ml-6">
+                    <div className="grid grid-cols-4 gap-2 md:flex md:flex-col md:space-y-2 md:ml-6 mt-2 md:mt-0 border-t md:border-t-0 pt-4 md:pt-0">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditPatient(patient)}
                         title="Edit Details"
+                        className="w-full"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -556,7 +559,7 @@ export default function ViewPatients() {
                         size="sm"
                         onClick={() => openDeleteConfirm(patient)}
                         disabled={deletingPatient === patient.patient_id}
-                        className="text-red-600 hover:text-red-700 hover:border-red-300"
+                        className="text-red-600 hover:text-red-700 hover:border-red-300 w-full"
                         title="Delete patient"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -573,6 +576,7 @@ export default function ViewPatients() {
                             )
                           }
                           title="View Document"
+                          className="w-full"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
@@ -589,6 +593,7 @@ export default function ViewPatients() {
                             )
                           }
                           title="View on Blockchain"
+                          className="w-full"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
@@ -634,7 +639,7 @@ export default function ViewPatients() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Patient</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete patient <strong>{confirmDeletePatient?.full_name}</strong>? 
+              Are you sure you want to delete patient <strong>{confirmDeletePatient?.full_name}</strong>?
               This action cannot be undone and will remove all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -650,7 +655,7 @@ export default function ViewPatients() {
         </AlertDialogContent>
       </AlertDialog>
       <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Export Patient Data</DialogTitle>
             <DialogDescription>
@@ -712,7 +717,7 @@ export default function ViewPatients() {
                     Registered: new Date(p.registration_date)
                       .toISOString()
                       .slice(0, 10),
-                    TxHash: p.blockchain_tx_hash || "",
+                    TxHash: p.blockchain_hash || "",
                   }))
                   .filter((r) => {
                     if (
@@ -746,7 +751,39 @@ export default function ViewPatients() {
                   doc.save(`patients_${Date.now()}.pdf`);
                 } else {
                   const XLSX = (await import("xlsx")).default as any;
+
+                  // Create worksheet
                   const ws = XLSX.utils.json_to_sheet(rows);
+
+                  // Get worksheet range
+                  const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+
+                  // Style header row with green background and white text
+                  for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cellAddress = XLSX.utils.encode_col(C) + "1";
+                    if (!ws[cellAddress]) continue;
+                    ws[cellAddress].s = {
+                      fill: { fgColor: { rgb: "16A34A" } },
+                      font: { bold: true, color: { rgb: "FFFFFF" } },
+                      alignment: { horizontal: "center", vertical: "center" }
+                    };
+                  }
+
+                  // Center align all data cells
+                  for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                      if (!ws[cellAddress]) continue;
+                      ws[cellAddress].s = {
+                        alignment: { horizontal: "center", vertical: "center" }
+                      };
+                    }
+                  }
+
+                  // Set column widths
+                  const cols = Object.keys(rows[0]);
+                  ws['!cols'] = cols.map(() => ({ wch: 15 }));
+
                   const wb = XLSX.utils.book_new();
                   XLSX.utils.book_append_sheet(wb, ws, "Patients");
                   XLSX.writeFile(wb, `patients_${Date.now()}.xlsx`);
