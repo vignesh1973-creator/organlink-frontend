@@ -376,7 +376,7 @@ export default function ViewDonors() {
         </div>
 
         {/* Stats Cards */}
-        < div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -430,10 +430,10 @@ export default function ViewDonors() {
               </div>
             </CardContent>
           </Card>
-        </div >
+        </div>
 
         {/* Filters */}
-        < Card className="mb-6" >
+        <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
@@ -490,7 +490,7 @@ export default function ViewDonors() {
               </Button>
             </div>
           </CardContent>
-        </Card >
+        </Card>
 
         {/* Donors List */}
         <div className="space-y-4">
@@ -580,7 +580,7 @@ export default function ViewDonors() {
                           {donor.emergency_contact} - {donor.emergency_phone}
                         </p>
                       </div>
-                    </div >
+                    </div>
 
                     <div className="flex md:flex-col gap-2 md:space-y-2 md:ml-6">
                       <Button
@@ -643,9 +643,9 @@ export default function ViewDonors() {
                         </Button>
                       )}
                     </div>
-                  </div >
-                </CardContent >
-              </Card >
+                  </div>
+                </CardContent>
+              </Card>
             ))
           ) : (
             <Card>
@@ -669,8 +669,8 @@ export default function ViewDonors() {
             </Card>
           )
           }
-        </div >
-      </div >
+        </div>
+      </div>
 
       <EditDonorModal
         donor={editingDonor}

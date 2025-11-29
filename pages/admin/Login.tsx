@@ -160,7 +160,7 @@ export default function AdminLogin() {
 
 
         {/* Right side - Image and Content */}
-        < div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-900 via-slate-800 to-gray-900 relative" >
+        <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative">
           <div className="flex flex-col justify-center px-12 py-12 text-white relative z-10">
             <div className="mb-8">
               <img
@@ -186,11 +186,11 @@ export default function AdminLogin() {
           <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full"></div>
           <div className="absolute bottom-20 left-10 w-16 h-16 bg-blue-400/20 rounded-full"></div>
           <div className="absolute top-1/3 right-1/4 w-12 h-12 bg-white/5 rounded-full"></div>
-        </div >
-      </div >
+        </div>
+      </div>
 
       {/* Footer */}
-      < div className="bg-gray-50 lg:bg-transparent py-4 text-center border-t lg:border-t-0" >
+      <div className="bg-gray-50 lg:bg-transparent py-4 text-center border-t lg:border-t-0">
         <p className="text-xs text-gray-500">
           © 2025 OrganLink. All rights reserved.
         </p>
@@ -207,7 +207,7 @@ export default function AdminLogin() {
             Support
           </a>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }

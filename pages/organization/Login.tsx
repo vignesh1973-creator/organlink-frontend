@@ -183,6 +183,6 @@ export default function OrganizationLogin() {
           © 2025 OrganLink. All rights reserved.
         </p>
       </div>
-    </div >
+    </div>
   );
 }

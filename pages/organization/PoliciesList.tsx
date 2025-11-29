@@ -332,15 +332,12 @@ export default function PoliciesList() {
                         </Button>
                       </div>
                     </div>
-                  </CardContent >
-                </Card >
+                  </CardContent>
+                </Card>
               ))
-            )
-            }
-          </div >
-
-
-        </div >
+            )}
+          </div>
+        </div>
       )}
 
       {/* Delete Confirmation Dialog */}
@@ -364,6 +361,6 @@ export default function PoliciesList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </OrganizationLayout >
+    </OrganizationLayout>
   );
 }

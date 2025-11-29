@@ -401,10 +401,10 @@ export default function ViewPatients() {
               </div>
             </CardContent>
           </Card>
-        </div >
+        </div>
 
         {/* Filters */}
-        < Card className="mb-6" >
+        <Card className="mb-6">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div className="relative">
@@ -476,10 +476,10 @@ export default function ViewPatients() {
               </Button>
             </div>
           </CardContent>
-        </Card >
+        </Card>
 
         {/* Patients List */}
-        < div className="space-y-4" >
+        <div className="space-y-4">
           {
             filteredPatients.length > 0 ? (
               filteredPatients.map((patient) => (
@@ -639,8 +639,8 @@ export default function ViewPatients() {
               </Card>
             )
           }
-        </div >
-      </div >
+        </div>
+      </div>
 
       <EditPatientModal
         patient={editingPatient}

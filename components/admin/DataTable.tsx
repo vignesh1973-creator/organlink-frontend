@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,13 +95,54 @@ export default function DataTable({
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-8">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-medical-600"></div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <Card>
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-center">
+              <Skeleton className="h-10 w-[300px]" />
+              <Skeleton className="h-9 w-[100px]" />
+            </div>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardContent className="p-0">
+            <div className="hidden md:block">
+              <div className="border-b p-4">
+                <div className="flex gap-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Skeleton key={i} className="h-4 flex-1" />
+                  ))}
+                </div>
+              </div>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="p-4 border-b last:border-0 flex gap-4 items-center">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[150px]" />
+                  </div>
+                  <Skeleton className="h-8 w-[100px]" />
+                </div>
+              ))}
+            </div>
+            <div className="md:hidden space-y-4 p-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white border rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                  <Skeleton className="h-8 w-full mt-4" />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -259,7 +301,7 @@ export default function DataTable({
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1">
                         {column.label}
                       </span>
-                      <div className="text-sm text-gray-900 text-right ml-4">
+                      <div className="text-sm text-gray-900 text-right ml-4 flex-1 min-w-0 break-words">
                         {column.render
                           ? column.render(row[column.key], row)
                           : row[column.key]}

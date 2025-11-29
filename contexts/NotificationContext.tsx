@@ -16,6 +16,7 @@ interface NotificationContextType {
   markAsRead: (id: number) => void;
   markAllAsRead: () => void;
   deleteNotification: (id: number) => void;
+  loading: boolean;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -154,6 +155,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    loading,
   };
 
   return (

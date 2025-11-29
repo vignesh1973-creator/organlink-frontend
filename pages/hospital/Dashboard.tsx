@@ -16,6 +16,7 @@ import {
   CheckCircle,
   PieChart,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import HospitalLayout from "@/components/hospital/HospitalLayout";
@@ -119,13 +120,7 @@ export default function HospitalDashboard() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-medical-600"></div>
-      </div>
-    );
-  }
+
 
   if (loading) {
     return (
@@ -136,12 +131,18 @@ export default function HospitalDashboard() {
               <Skeleton key={i} className="h-32 w-full rounded-xl" />
             ))}
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Skeleton className="h-96 w-full rounded-xl" />
-            <Skeleton className="h-96 w-full rounded-xl" />
-          </div>
         </div>
-      </HospitalLayout>
+        {/* Quick Actions Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Skeleton className="h-64 w-full rounded-xl" />
+          <Skeleton className="h-64 w-full rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Skeleton className="h-96 w-full rounded-xl" />
+          <Skeleton className="h-96 w-full rounded-xl" />
+        </div>
+      </div>
+      </HospitalLayout >
     );
   }
 
@@ -214,7 +215,7 @@ export default function HospitalDashboard() {
           </Card>
 
           {/* Verified Records */}
-          < Card >
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -234,10 +235,10 @@ export default function HospitalDashboard() {
                 </div>
               </div>
             </CardContent>
-          </Card >
+          </Card>
 
           {/* Urgent Cases */}
-          < Card >
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -256,13 +257,13 @@ export default function HospitalDashboard() {
                 </div>
               </div>
             </CardContent>
-          </Card >
-        </div >
+          </Card>
+        </div>
 
         {/* Quick Actions */}
-        < div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Quick Actions Card */}
-          < Card >
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Activity className="h-5 w-5 mr-2" />
@@ -309,10 +310,10 @@ export default function HospitalDashboard() {
                 </Link>
               </div>
             </CardContent>
-          </Card >
+          </Card>
 
           {/* Matching Status */}
-          < Card >
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <TrendingUp className="h-5 w-5 mr-2" />
@@ -351,13 +352,13 @@ export default function HospitalDashboard() {
                 </Link>
               </div>
             </CardContent>
-          </Card >
-        </div >
+          </Card>
+        </div>
 
         {/* Recent Activities & Distribution Charts */}
-        < div className="grid grid-cols-1 lg:grid-cols-2 gap-6" >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activities */}
-          < Card >
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Clock className="h-5 w-5 mr-2" />
@@ -407,10 +408,10 @@ export default function HospitalDashboard() {
                 )}
               </div>
             </CardContent>
-          </Card >
+          </Card>
 
           {/* Blood Type Distribution */}
-          < Card >
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <PieChart className="h-5 w-5 mr-2" />
@@ -446,9 +447,9 @@ export default function HospitalDashboard() {
                 ))}
               </div>
             </CardContent>
-          </Card >
-        </div >
-      </div >
-    </HospitalLayout >
+          </Card>
+        </div>
+      </div>
+    </HospitalLayout>
   );
 }

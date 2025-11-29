@@ -13,6 +13,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { Bell, Check, Trash2, Filter, Clock, Shield, AlertTriangle, CheckCircle, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Notifications() {
   const [filter, setFilter] = useState<string>("all");
@@ -22,6 +23,7 @@ export default function Notifications() {
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    loading,
   } = useNotifications();
 
   const filteredNotifications = notifications.filter((notification) => {
@@ -117,108 +119,129 @@ export default function Notifications() {
 
         {/* Notifications List */}
         <div className="space-y-4">
-          <AnimatePresence mode="popLayout">
-            {filteredNotifications.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <Card className="border-dashed">
-                  <CardContent className="p-12 text-center">
-                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Bell className="h-8 w-8 text-gray-400" />
+          {loading ? (
+            // Skeleton Loader
+            Array.from({ length: 5 }).map((_, i) => (
+              <Card key={i} className="border-l-4 border-l-gray-200">
+                <CardContent className="p-5 sm:p-6">
+                  <div className="flex gap-4 sm:gap-6">
+                    <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="flex justify-between">
+                        <Skeleton className="h-5 w-1/3" />
+                        <Skeleton className="h-5 w-20" />
+                      </div>
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No notifications found
-                    </h3>
-                    <p className="text-gray-500 max-w-sm mx-auto">
-                      {filter === "all"
-                        ? "You're all caught up! Check back later for new updates."
-                        : `No ${filter} notifications to display at the moment.`}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ) : (
-              filteredNotifications.map((notification) => (
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {filteredNotifications.length === 0 ? (
                 <motion.div
-                  key={notification.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  layout
+                  exit={{ opacity: 0, y: -20 }}
                 >
-                  <Card
-                    className={`group cursor-pointer transition-all duration-200 hover:shadow-md border-l-4 ${!notification.read
-                        ? "border-l-medical-500 bg-white"
-                        : "border-l-gray-200 bg-gray-50/50"
-                      }`}
-                    onClick={() => markAsRead(notification.id)}
-                  >
-                    <CardContent className="p-5 sm:p-6">
-                      <div className="flex gap-4 sm:gap-6">
-                        {/* Icon */}
-                        <div className={`flex-shrink-0 mt-1`}>
-                          <div className={`p-2 rounded-full ${notification.read ? "bg-gray-100" : "bg-white shadow-sm ring-1 ring-gray-100"
-                            }`}>
-                            {getTypeIcon(notification.type)}
-                          </div>
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <h3 className={`text-base font-semibold ${notification.read ? "text-gray-700" : "text-gray-900"
-                                  }`}>
-                                  {notification.title}
-                                </h3>
-                                {!notification.read && (
-                                  <span className="flex h-2 w-2 rounded-full bg-medical-500 ring-2 ring-white" />
-                                )}
-                              </div>
-                              <p className={`text-sm leading-relaxed ${notification.read ? "text-gray-500" : "text-gray-600"
-                                }`}>
-                                {notification.fullMessage || notification.message}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1 flex-shrink-0">
-                              <Badge variant="outline" className={`${getTypeColor(notification.type)} border`}>
-                                {notification.type}
-                              </Badge>
-                              <div className="flex items-center text-xs text-gray-400">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {notification.time}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex justify-end mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteNotification(notification.id);
-                              }}
-                              className="text-gray-400 hover:text-red-600 hover:bg-red-50 h-8 px-2"
-                            >
-                              <Trash2 className="h-4 w-4 mr-1.5" />
-                              <span className="text-xs">Delete</span>
-                            </Button>
-                          </div>
-                        </div>
+                  <Card className="border-dashed">
+                    <CardContent className="p-12 text-center">
+                      <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Bell className="h-8 w-8 text-gray-400" />
                       </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No notifications found
+                      </h3>
+                      <p className="text-gray-500 max-w-sm mx-auto">
+                        {filter === "all"
+                          ? "You're all caught up! Check back later for new updates."
+                          : `No ${filter} notifications to display at the moment.`}
+                      </p>
                     </CardContent>
                   </Card>
                 </motion.div>
-              ))
-            )}
-          </AnimatePresence>
+              ) : (
+                filteredNotifications.map((notification) => (
+                  <motion.div
+                    key={notification.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    layout
+                  >
+                    <Card
+                      className={`group cursor-pointer transition-all duration-200 hover:shadow-md border-l-4 ${!notification.read
+                        ? "border-l-medical-500 bg-white"
+                        : "border-l-gray-200 bg-gray-50/50"
+                        }`}
+                      onClick={() => markAsRead(notification.id)}
+                    >
+                      <CardContent className="p-5 sm:p-6">
+                        <div className="flex gap-4 sm:gap-6">
+                          {/* Icon */}
+                          <div className={`flex-shrink-0 mt-1`}>
+                            <div className={`p-2 rounded-full ${notification.read ? "bg-gray-100" : "bg-white shadow-sm ring-1 ring-gray-100"
+                              }`}>
+                              {getTypeIcon(notification.type)}
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <h3 className={`text-base font-semibold ${notification.read ? "text-gray-700" : "text-gray-900"
+                                    }`}>
+                                    {notification.title}
+                                  </h3>
+                                  {!notification.read && (
+                                    <span className="flex h-2 w-2 rounded-full bg-medical-500 ring-2 ring-white" />
+                                  )}
+                                </div>
+                                <p className={`text-sm leading-relaxed ${notification.read ? "text-gray-500" : "text-gray-600"
+                                  }`}>
+                                  {notification.fullMessage || notification.message}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1 flex-shrink-0">
+                                <Badge variant="outline" className={`${getTypeColor(notification.type)} border`}>
+                                  {notification.type}
+                                </Badge>
+                                <div className="flex items-center text-xs text-gray-400">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {notification.time}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex justify-end mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteNotification(notification.id);
+                                }}
+                                className="text-gray-400 hover:text-red-600 hover:bg-red-50 h-8 px-2"
+                              >
+                                <Trash2 className="h-4 w-4 mr-1.5" />
+                                <span className="text-xs">Delete</span>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </AdminLayout>
