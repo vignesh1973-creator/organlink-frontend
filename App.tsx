@@ -8,10 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import FAQs from "./pages/FAQs";
-import OrganInfo from "./pages/OrganInfo";
+
 import HospitalLogin from "./pages/hospital/Login";
 import OrganizationLogin from "./pages/organization/Login";
 import OrganizationDashboard from "./pages/organization/Dashboard";
@@ -60,129 +57,126 @@ const App = () => (
             <HospitalNotificationProvider>
               <NotificationProvider>
                 <ToastProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/faqs" element={<FAQs />} />
-                    <Route path="/organ-info" element={<OrganInfo />} />
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
 
-                    {/* Hospital Routes */}
-                    <Route path="/hospital/login" element={<HospitalLogin />} />
-                    <Route
-                      path="/hospital/dashboard"
-                      element={<HospitalDashboard />}
-                    />
-                    <Route
-                      path="/hospital/patients/register"
-                      element={<RegisterPatient />}
-                    />
-                    <Route
-                      path="/hospital/donors/register"
-                      element={<RegisterDonor />}
-                    />
-                    <Route
-                      path="/hospital/patients"
-                      element={<ViewPatients />}
-                    />
-                    <Route path="/hospital/donors" element={<ViewDonors />} />
-                    <Route
-                      path="/hospital/ai-matching"
-                      element={<AIMatching />}
-                    />
-                    <Route
-                      path="/hospital/reports"
-                      element={<HospitalReports />}
-                    />
-                    <Route path="/hospital/faqs" element={<HospitalFAQs />} />
 
-                    {/* Organization Routes */}
-                    <Route
-                      path="/organization/login"
-                      element={<OrganizationLogin />}
-                    />
-                    <Route
-                      path="/organization/dashboard"
-                      element={<OrganizationDashboard />}
-                    />
-                    <Route
-                      path="/organization/policies"
-                      element={<OrgPolicies />}
-                    />
-                    <Route
-                      path="/organization/policies/propose"
-                      element={<ProposePolicy />}
-                    />
-                    <Route
-                      path="/organization/policies/vote"
-                      element={<VotePolicy />}
-                    />
-                    <Route
-                      path="/organization/policies/vote/:policyId"
-                      element={<VotePolicyPage />}
-                    />
-                    <Route
-                      path="/organization/blockchain-voting"
-                      element={<PolicyVoting />}
-                    />
-                    <Route
-                      path="/organization/insights"
-                      element={<OrganizationInsights />}
-                    />
-                    <Route
-                      path="/organization/faqs"
-                      element={<OrganizationFAQs />}
-                    />
+                      {/* Hospital Routes */}
+                      <Route path="/hospital/login" element={<HospitalLogin />} />
+                      <Route
+                        path="/hospital/dashboard"
+                        element={<HospitalDashboard />}
+                      />
+                      <Route
+                        path="/hospital/patients/register"
+                        element={<RegisterPatient />}
+                      />
+                      <Route
+                        path="/hospital/donors/register"
+                        element={<RegisterDonor />}
+                      />
+                      <Route
+                        path="/hospital/patients"
+                        element={<ViewPatients />}
+                      />
+                      <Route path="/hospital/donors" element={<ViewDonors />} />
+                      <Route
+                        path="/hospital/ai-matching"
+                        element={<AIMatching />}
+                      />
+                      <Route
+                        path="/hospital/reports"
+                        element={<HospitalReports />}
+                      />
+                      <Route path="/hospital/faqs" element={<HospitalFAQs />} />
 
-                    {/* Admin Routes */}
-                    <Route
-                      path="/admin"
-                      element={<Navigate to="/admin/login" replace />}
-                    />
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route
-                      path="/admin/dashboard"
-                      element={<AdminDashboard />}
-                    />
-                    <Route
-                      path="/admin/hospitals"
-                      element={<ManageHospitals />}
-                    />
-                    <Route
-                      path="/admin/hospitals/register"
-                      element={<RegisterHospital />}
-                    />
-                    <Route
-                      path="/admin/organizations"
-                      element={<ManageOrganizations />}
-                    />
-                    <Route
-                      path="/admin/organizations/register"
-                      element={<RegisterOrganization />}
-                    />
-                    <Route path="/admin/policies" element={<AdminPolicies />} />
-                    <Route
-                      path="/admin/notifications"
-                      element={<AdminNotifications />}
-                    />
-                    <Route path="/admin/ipfs-logs" element={<IPFSLogs />} />
-                    <Route
-                      path="/admin/blockchain-logs"
-                      element={<BlockchainLogs />}
-                    />
-                    <Route
-                      path="/admin/reset-passwords"
-                      element={<ResetPasswords />}
-                    />
-                    <Route path="/admin/settings" element={<AdminSettings />} />
+                      {/* Organization Routes */}
+                      <Route
+                        path="/organization/login"
+                        element={<OrganizationLogin />}
+                      />
+                      <Route
+                        path="/organization/dashboard"
+                        element={<OrganizationDashboard />}
+                      />
+                      <Route
+                        path="/organization/policies"
+                        element={<OrgPolicies />}
+                      />
+                      <Route
+                        path="/organization/policies/propose"
+                        element={<ProposePolicy />}
+                      />
+                      <Route
+                        path="/organization/policies/vote"
+                        element={<VotePolicy />}
+                      />
+                      <Route
+                        path="/organization/policies/vote/:policyId"
+                        element={<VotePolicyPage />}
+                      />
+                      <Route
+                        path="/organization/blockchain-voting"
+                        element={<PolicyVoting />}
+                      />
+                      <Route
+                        path="/organization/insights"
+                        element={<OrganizationInsights />}
+                      />
+                      <Route
+                        path="/organization/faqs"
+                        element={<OrganizationFAQs />}
+                      />
 
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </BrowserRouter>
+                      {/* Admin Routes */}
+                      <Route
+                        path="/admin"
+                        element={<Navigate to="/admin/login" replace />}
+                      />
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route
+                        path="/admin/dashboard"
+                        element={<AdminDashboard />}
+                      />
+                      <Route
+                        path="/admin/hospitals"
+                        element={<ManageHospitals />}
+                      />
+                      <Route
+                        path="/admin/hospitals/register"
+                        element={<RegisterHospital />}
+                      />
+                      <Route
+                        path="/admin/organizations"
+                        element={<ManageOrganizations />}
+                      />
+                      <Route
+                        path="/admin/organizations/register"
+                        element={<RegisterOrganization />}
+                      />
+                      <Route path="/admin/policies" element={<AdminPolicies />} />
+                      <Route
+                        path="/admin/notifications"
+                        element={<AdminNotifications />}
+                      />
+                      <Route path="/admin/ipfs-logs" element={<IPFSLogs />} />
+                      <Route
+                        path="/admin/blockchain-logs"
+                        element={<BlockchainLogs />}
+                      />
+                      <Route
+                        path="/admin/reset-passwords"
+                        element={<ResetPasswords />}
+                      />
+                      <Route path="/admin/settings" element={<AdminSettings />} />
+
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
                 </ToastProvider>
               </NotificationProvider>
             </HospitalNotificationProvider>

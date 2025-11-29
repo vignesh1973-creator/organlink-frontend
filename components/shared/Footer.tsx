@@ -63,36 +63,58 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <nav className="space-y-2">
-              <Link
-                to="/"
-                className="block text-gray-400 hover:text-white transition-colors"
-              >
-                Home
-              </Link>
-              <Link
-                to="/about"
-                className="block text-gray-400 hover:text-white transition-colors"
-              >
-                About Us
-              </Link>
-              <Link
-                to="/organ-info"
-                className="block text-gray-400 hover:text-white transition-colors"
-              >
-                Organ Information
-              </Link>
-              <Link
-                to="/faqs"
-                className="block text-gray-400 hover:text-white transition-colors"
-              >
-                FAQs
-              </Link>
-              <Link
-                to="/contact"
-                className="block text-gray-400 hover:text-white transition-colors"
-              >
-                Contact
-              </Link>
+              <nav className="space-y-2">
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("home")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="block text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Home
+                </a>
+                <a
+                  href="#about"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="block text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  About Us
+                </a>
+                <a
+                  href="#features"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="block text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Organ Information
+                </a>
+                <a
+                  href="#faqs"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("faqs")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="block text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  FAQs
+                </a>
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="block text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  Contact
+                </a>
+              </nav>
             </nav>
           </div>
 
