@@ -99,6 +99,7 @@ export default function ManageHospitals() {
     {
       key: "specializations",
       label: "Specializations",
+      className: "whitespace-normal min-w-[200px]",
       render: (value: string[]) => (
         <div className="flex flex-wrap gap-1">
           {value && value.length > 0 ? (
@@ -121,6 +122,7 @@ export default function ManageHospitals() {
     {
       key: "last_activity",
       label: "Last Activity",
+      className: "hidden xl:table-cell",
       render: (value: string) => (
         <span className="text-sm text-gray-500">
           {value ? new Date(value).toLocaleDateString("en-IN", {

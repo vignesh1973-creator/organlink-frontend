@@ -23,6 +23,7 @@ interface Column {
   label: string;
   sortable?: boolean;
   render?: (value: any, row: any) => React.ReactNode;
+  className?: string;
 }
 
 interface Filter {
@@ -175,7 +176,7 @@ export default function DataTable({
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${column.className || ""}`}
                     >
                       {column.label}
                     </th>
@@ -207,7 +208,7 @@ export default function DataTable({
                       {columns.map((column) => (
                         <td
                           key={column.key}
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                          className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${column.className || ""}`}
                         >
                           {column.render
                             ? column.render(row[column.key], row)
