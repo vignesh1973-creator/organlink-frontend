@@ -141,8 +141,7 @@ export default function HospitalDashboard() {
           <Skeleton className="h-96 w-full rounded-xl" />
           <Skeleton className="h-96 w-full rounded-xl" />
         </div>
-      </div>
-      </HospitalLayout >
+      </HospitalLayout>
     );
   }
 
