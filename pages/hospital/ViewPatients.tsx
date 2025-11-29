@@ -95,6 +95,8 @@ export default function ViewPatients() {
   const [confirmDeletePatient, setConfirmDeletePatient] = useState<Patient | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState<"pdf" | "excel">("pdf");
+  const [exportFrom, setExportFrom] = useState("");
+  const [exportTo, setExportTo] = useState("");
   const [exportFields, setExportFields] = useState({
     name: true,
     age: true,
