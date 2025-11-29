@@ -20,7 +20,7 @@ import { Users, Eye, EyeOff } from "lucide-react";
 
 interface OrganizationFormData {
   organizationName: string;
-  organizationId: string;
+
   organizationType: string;
   foundedYear: string;
   registrationNumber: string;
@@ -94,7 +94,7 @@ export default function RegisterOrganization() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<OrganizationFormData>({
     organizationName: "",
-    organizationId: "",
+
     organizationType: "",
     foundedYear: "",
     registrationNumber: "",
@@ -172,7 +172,7 @@ export default function RegisterOrganization() {
         },
         body: JSON.stringify({
           name: formData.organizationName,
-          organization_id: formData.organizationId,
+
           country: formData.country,
           type: formData.organizationType,
           email: formData.emailAddress,
@@ -248,18 +248,7 @@ export default function RegisterOrganization() {
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="organizationId">Organization ID *</Label>
-                    <Input
-                      id="organizationId"
-                      value={formData.organizationId}
-                      onChange={(e) =>
-                        handleInputChange("organizationId", e.target.value)
-                      }
-                      placeholder="ORG001"
-                      required
-                    />
-                  </div>
+
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
