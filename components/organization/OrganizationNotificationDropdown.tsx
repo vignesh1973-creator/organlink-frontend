@@ -79,6 +79,25 @@ export default function OrganizationNotificationDropdown({ isOpen, onClose }: Pr
     }
   };
 
+  const handleDeleteNotification = async (e: React.MouseEvent, notificationId: string | number) => {
+    e.stopPropagation(); // Prevent triggering the click handler for the notification
+    try {
+      const token = localStorage.getItem("organization_token");
+      const res = await fetch(`/api/organization/policies/notifications/${notificationId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        setNotifications(prev => prev.filter(n => n.notification_id !== notificationId));
+      }
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
+    }
+  };
+
   const getIcon = (title: string) => {
     if (title.includes('Policy') && title.includes('Proposal')) {
       return { icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' };
@@ -143,7 +162,7 @@ export default function OrganizationNotificationDropdown({ isOpen, onClose }: Pr
                   <div
                     key={notification.notification_id}
                     onClick={() => handleNotificationClick(notification)}
-                    className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${!notification.is_read ? 'bg-blue-50/30' : ''
+                    className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer group relative ${!notification.is_read ? 'bg-blue-50/30' : ''
                       }`}
                   >
                     <div className="flex items-start space-x-3">
@@ -152,16 +171,25 @@ export default function OrganizationNotificationDropdown({ isOpen, onClose }: Pr
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                          <div className="flex-1 pr-6">
                             <p className="font-medium text-gray-900 text-sm">{notification.title}</p>
                             <p className="text-gray-600 text-sm mt-1">{notification.message}</p>
                             <p className="text-gray-400 text-xs mt-2">{getTimeAgo(notification.created_at)}</p>
                           </div>
                           {!notification.is_read && (
-                            <div className="w-2 h-2 bg-blue-600 rounded-full mt-1 ml-2"></div>
+                            <div className="w-2 h-2 bg-blue-600 rounded-full mt-1 ml-2 flex-shrink-0"></div>
                           )}
                         </div>
                       </div>
+
+                      {/* Delete Button - Visible on hover or always on mobile */}
+                      <button
+                        onClick={(e) => handleDeleteNotification(e, notification.notification_id)}
+                        className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Delete notification"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 );
