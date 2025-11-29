@@ -113,234 +113,873 @@ export default function ViewDonors() {
     setExportFields(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
-  // ... existing code ...
+  const { hospital } = useHospitalAuth();
+  const { error: showError, success: showSuccess } = useToast();
 
-            <div>
-              <p className="text-sm font-medium mb-2">Select Fields</p>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.donorId}
-                    onChange={() => toggleExportField('donorId')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Donor ID</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.name}
-                    onChange={() => toggleExportField('name')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Name</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.age}
-                    onChange={() => toggleExportField('age')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Age</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.gender}
-                    onChange={() => toggleExportField('gender')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Gender</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.bloodType}
-                    onChange={() => toggleExportField('bloodType')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Blood Type</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.organs}
-                    onChange={() => toggleExportField('organs')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Organs</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.contact}
-                    onChange={() => toggleExportField('contact')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Contact Info</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.status}
-                    onChange={() => toggleExportField('status')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Status</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.verified}
-                    onChange={() => toggleExportField('verified')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Verification</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.registrationDate}
-                    onChange={() => toggleExportField('registrationDate')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Reg. Date</span>
-                </label>
-                 <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={exportFields.txHash}
-                    onChange={() => toggleExportField('txHash')}
-                    className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
-                  />
-                  <span>Tx Hash</span>
-                </label>
-              </div>
+  useEffect(() => {
+    fetchDonors();
+  }, []);
+
+  useEffect(() => {
+    filterDonors();
+  }, [donors, searchTerm, filterOrgan, filterBloodType]);
+
+  const fetchDonors = async () => {
+    try {
+      const token = localStorage.getItem("hospital_token");
+      const response = await fetch("/api/hospital/donors", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setDonors(data.donors);
+      } else {
+        showError("Failed to load donors");
+      }
+    } catch (error) {
+      console.error("Failed to fetch donors:", error);
+      showError("Failed to load donors");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterDonors = () => {
+    let filtered = donors;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (donor) =>
+          donor.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          donor.donor_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          donor.contact_email.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+
+    // Organ filter
+    if (filterOrgan && filterOrgan !== "all") {
+      filtered = filtered.filter((donor) =>
+        donor.organs_to_donate.includes(filterOrgan),
+      );
+    }
+
+    // Blood type filter
+    if (filterBloodType && filterBloodType !== "all") {
+      filtered = filtered.filter(
+        (donor) => donor.blood_type === filterBloodType,
+      );
+    }
+
+    setFilteredDonors(filtered);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const organTypes = [
+    "Kidney",
+    "Liver",
+    "Heart",
+    "Lung",
+    "Pancreas",
+    "Cornea",
+    "Bone Marrow",
+    "Skin",
+    "Bone",
+  ];
+  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+  const handleEditDonor = (donor: Donor) => {
+    setEditingDonor(donor);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDonorUpdate = (updatedDonor: Donor) => {
+    setDonors((prev) =>
+      prev.map((d) =>
+        d.donor_id === updatedDonor.donor_id ? updatedDonor : d,
+      ),
+    );
+    setFilteredDonors((prev) =>
+      prev.map((d) =>
+        d.donor_id === updatedDonor.donor_id ? updatedDonor : d,
+      ),
+    );
+  };
+
+  const openDeleteConfirm = (donor: Donor) => {
+    setConfirmDeleteDonor(donor);
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDeleteDonor) return;
+    await handleDeleteDonor(confirmDeleteDonor.donor_id);
+    setConfirmDeleteDonor(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingDonor(null);
+  };
+
+  const handleDeleteDonor = async (donorId: string) => {
+    setDeletingDonor(donorId);
+    try {
+      const token = localStorage.getItem("hospital_token");
+      const response = await fetch(`/api/hospital/donors/${donorId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Delete failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        showSuccess("Donor deleted successfully!");
+        // Remove from local state
+        setDonors((prev) => prev.filter((d) => d.donor_id !== donorId));
+        setFilteredDonors((prev) => prev.filter((d) => d.donor_id !== donorId));
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      showError("Failed to delete donor");
+    } finally {
+      setDeletingDonor(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <HospitalLayout title="Donor Management" subtitle="Manage and track organ donors">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-10 w-48" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-64 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </HospitalLayout>
+    );
+  }
+
+  return (
+    <HospitalLayout
+      title="Donor Management"
+      subtitle="View and manage registered donors"
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center space-x-4"></div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={() => setExportOpen(true)}
+                className="w-full sm:w-auto"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Data
+              </Button>
+              <Link to="/hospital/donors/register" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-medical-600 hover:bg-medical-700">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Register New Donor
+                </Button>
+              </Link>
             </div>
+          </div>
+        </div>
 
-            <div>
-              <p className="text-sm font-medium mb-2">Date Range (Optional)</p>
-              <div className="grid grid-cols-2 gap-2">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Donors</p>
+                  <p className="text-2xl font-bold">{donors.length}</p>
+                </div>
+                <Heart className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Active Donors</p>
+                  <p className="text-2xl font-bold">
+                    {donors.filter((d) => d.is_active).length}
+                  </p>
+                </div>
+                <UserCheck className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Verified</p>
+                  <p className="text-2xl font-bold">
+                    {donors.filter((d) => d.signature_verified).length}
+                  </p>
+                </div>
+                <CheckCircle className="h-8 w-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Organs</p>
+                  <p className="text-2xl font-bold">
+                    {donors.reduce(
+                      (total, donor) => total + donor.organs_to_donate.length,
+                      0,
+                    )}
+                  </p>
+                </div>
+                <Heart className="h-8 w-8 text-red-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  type="date"
-                  value={exportFrom}
-                  onChange={(e) => setExportFrom(e.target.value)}
-                />
-                <Input
-                  type="date"
-                  value={exportTo}
-                  onChange={(e) => setExportTo(e.target.value)}
+                  placeholder="Search donors..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
                 />
               </div>
+
+              <Select value={filterOrgan} onValueChange={setFilterOrgan}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by organ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Organs</SelectItem>
+                  {organTypes.map((organ) => (
+                    <SelectItem key={organ} value={organ}>
+                      {organ}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={filterBloodType}
+                onValueChange={setFilterBloodType}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by blood type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Blood Types</SelectItem>
+                  {bloodTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchTerm("");
+                  setFilterOrgan("all");
+                  setFilterBloodType("all");
+                }}
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Clear Filters
+              </Button>
             </div>
-          </div >
-    <DialogFooter>
-      <Button variant="outline" onClick={() => setExportOpen(false)}>
-        Cancel
-      </Button>
-      <Button
-        onClick={async () => {
-          const rows = filteredDonors
-            .map((d) => {
-              const row: any = {};
-              if (exportFields.donorId) row.DonorID = d.donor_id;
-              if (exportFields.name) row.Name = d.full_name;
-              if (exportFields.age) row.Age = d.age;
-              if (exportFields.gender) row.Gender = d.gender;
-              if (exportFields.bloodType) row.BloodType = d.blood_type;
-              if (exportFields.organs) row.Organs = d.organs_to_donate.join(", ");
-              if (exportFields.contact) {
-                row.Phone = d.contact_phone;
-                row.Email = d.contact_email;
-              }
-              if (exportFields.status) row.Status = d.is_active ? "ACTIVE" : "INACTIVE";
-              if (exportFields.verified) row.Verified = d.signature_verified ? "Yes" : "No";
-              if (exportFields.registrationDate) {
-                row.Registered = new Date(d.registration_date)
-                  .toISOString()
-                  .slice(0, 10);
-              }
-              if (exportFields.txHash) row.TxHash = d.blockchain_hash || "";
+          </CardContent>
+        </Card>
 
-              // Always include for filtering
-              row._regDate = new Date(d.registration_date);
-              return row;
-            })
-            .filter((r) => {
-              if (
-                exportFrom &&
-                r._regDate < new Date(exportFrom)
-              )
-                return false;
-              if (exportTo && r._regDate > new Date(exportTo))
-                return false;
+        {/* Donors List */}
+        <div className="space-y-4">
+          {filteredDonors.length > 0 ? (
+            filteredDonors.map((donor) => (
+              <Card
+                key={donor.donor_id}
+                className="hover:shadow-md transition-shadow"
+              >
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-4 mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {donor.full_name}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            ID: {donor.hospital_display_id ? `#${donor.hospital_display_id}` : donor.donor_id} • Age: {donor.age} •{" "}
+                            {donor.gender}
+                          </p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Badge variant="outline">{donor.blood_type}</Badge>
+                          {donor.signature_verified && (
+                            <Badge className="bg-green-100 text-green-800">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Verified
+                            </Badge>
+                          )}
+                          {donor.is_active && (
+                            <Badge className="bg-blue-100 text-blue-800">
+                              Active
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
 
-              delete r._regDate; // Remove helper field
-              return true;
-            });
+                      <div className="mb-4">
+                        <p className="text-sm font-medium text-gray-700 mb-2">
+                          Organs to Donate:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {donor.organs_to_donate.map((organ) => (
+                            <Badge
+                              key={organ}
+                              className="bg-red-100 text-red-800"
+                            >
+                              <Heart className="h-3 w-3 mr-1" />
+                              {organ}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
 
-          if (!rows.length) {
-            setExportOpen(false);
-            return;
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center text-gray-600">
+                          <Phone className="h-4 w-4 mr-2" />
+                          {donor.contact_phone}
+                        </div>
+                        {donor.contact_email && (
+                          <div className="flex items-center text-gray-600">
+                            <Mail className="h-4 w-4 mr-2" />
+                            {donor.contact_email}
+                          </div>
+                        )}
+                        <div className="flex items-center text-gray-600">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Registered: {formatDate(donor.registration_date)}
+                        </div>
+                      </div>
+
+                      {
+                        donor.medical_history && (
+                          <div className="mt-3">
+                            <p className="text-sm text-gray-600">
+                              <strong>Medical History:</strong>{" "}
+                              {donor.medical_history}
+                            </p>
+                          </div>
+                        )
+                      }
+
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-600">
+                          <strong>Emergency Contact:</strong>{" "}
+                          {donor.emergency_contact} - {donor.emergency_phone}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex md:flex-col gap-2 md:space-y-2 md:ml-6">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setViewDonor(donor)}
+                        title="View details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditDonor(donor)}
+                        title="Edit donor"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDeleteConfirm(donor)}
+                        disabled={deletingDonor === donor.donor_id}
+                        className="text-red-600 hover:text-red-700 hover:border-red-300"
+                        title="Delete donor"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+
+                      {donor.blockchain_hash && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={
+                            !(
+                              donor.blockchain_hash.startsWith("0x") &&
+                              donor.blockchain_hash.length === 66
+                            )
+                          }
+                          onClick={() => {
+                            if (
+                              donor.blockchain_hash.startsWith("0x") &&
+                              donor.blockchain_hash.length === 66
+                            ) {
+                              window.open(
+                                `https://sepolia.etherscan.io/tx/${donor.blockchain_hash}`,
+                                "_blank",
+                              );
+                            }
+                          }}
+                          title={
+                            donor.blockchain_hash.startsWith("0x")
+                              ? "View on Etherscan"
+                              : "Demo TX (not on-chain)"
+                          }
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <Heart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No Donors Found
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {donors.length === 0
+                    ? "No donors have been registered yet."
+                    : "No donors match your current filter criteria."}
+                </p>
+                <Link to="/hospital/donors/register">
+                  <Button className="bg-medical-600 hover:bg-medical-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Register First Donor
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )
           }
+        </div>
+      </div>
 
-          if (exportFormat === "pdf") {
-            const jsPDF = (await import("jspdf")).default;
-            const autoTable = (await import("jspdf-autotable"))
-              .default as any;
-            const doc = new jsPDF({ orientation: "landscape" });
-            const cols = Object.keys(rows[0]);
-            doc.text("Donor Report", 14, 14);
-            autoTable(doc, {
-              head: [cols],
-              body: rows.map((r) => cols.map((c) => (r as any)[c])),
-              styles: { fontSize: 8 },
-              headStyles: { fillColor: [22, 163, 74] },
-              startY: 20,
-              theme: "grid",
-            });
-            doc.save(`donors_${Date.now()}.pdf`);
-          } else {
-            const XLSX = (await import("xlsx")).default as any;
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+      <EditDonorModal
+        donor={editingDonor}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onUpdate={handleDonorUpdate}
+      />
 
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-              const cellAddress = XLSX.utils.encode_col(C) + "1";
-              if (!ws[cellAddress]) continue;
-              ws[cellAddress].s = {
-                fill: { fgColor: { rgb: "16A34A" } },
-                font: { bold: true, color: { rgb: "FFFFFF" } },
-                alignment: { horizontal: "center", vertical: "center" }
-              };
+      {
+        viewDonor && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Donor Details</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setViewDonor(null)}
+                >
+                  Close
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="font-medium text-gray-700">
+                    Personal Information
+                  </p>
+                  <p className="text-gray-600 mt-1">{viewDonor.full_name}</p>
+                  <p className="text-gray-600">
+                    {viewDonor.age} years • {viewDonor.gender}
+                  </p>
+                  <p className="text-gray-600">
+                    Blood Type: {viewDonor.blood_type}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Contact</p>
+                  <p className="text-gray-600 mt-1">{viewDonor.contact_phone}</p>
+                  {viewDonor.contact_email && (
+                    <p className="text-gray-600">{viewDonor.contact_email}</p>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Organs</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {viewDonor.organs_to_donate.map((o) => (
+                      <Badge key={o} className="bg-red-100 text-red-800">
+                        {o}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Blockchain</p>
+                  {viewDonor.blockchain_hash &&
+                    viewDonor.blockchain_hash.startsWith("0x") ? (
+                    <a
+                      className="text-medical-600 underline"
+                      target="_blank"
+                      href={`https://sepolia.etherscan.io/tx/${viewDonor.blockchain_hash}`}
+                    >
+                      View on Etherscan
+                    </a>
+                  ) : (
+                    <p className="text-gray-600">
+                      {viewDonor.blockchain_hash
+                        ? "Demo TX (not on-chain)"
+                        : "Not registered"}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                {viewDonor.signature_ipfs_hash && (
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      window.open(
+                        `https://gateway.pinata.cloud/ipfs/${viewDonor.signature_ipfs_hash}`,
+                        "_blank",
+                      )
+                    }
+                  >
+                    View Document
+                  </Button>
+                )}
+                <Button
+                  onClick={() => {
+                    setViewDonor(null);
+                    handleEditDonor(viewDonor);
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      <AlertDialog open={!!confirmDeleteDonor}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete donor?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. The donor record "
+              {confirmDeleteDonor?.full_name}" will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmDeleteDonor(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+        <DialogContent className="max-w-xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Export Donor Data</DialogTitle>
+            <DialogDescription>
+              Choose your export format and customize the data to include
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm font-medium mb-2">Export Format</p>
+              <div className="inline-flex rounded-md border overflow-hidden">
+                <button
+                  className={`px-4 py-2 text-sm ${exportFormat === "pdf" ? "bg-medical-600 text-white" : "bg-white"} `}
+                  onClick={() => setExportFormat("pdf")}
+                >
+                  PDF
+                </button>
+                <button
+                  className={`px-4 py-2 text-sm border-l ${exportFormat === "excel" ? "bg-medical-600 text-white" : "bg-white"} `}
+                  onClick={() => setExportFormat("excel")}
+                >
+                  Excel/CSV
+                </button>
+              </div>
+            </div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.donorId}
+                onChange={() => toggleExportField('donorId')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Donor ID</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.name}
+                onChange={() => toggleExportField('name')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Name</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.age}
+                onChange={() => toggleExportField('age')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Age</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.gender}
+                onChange={() => toggleExportField('gender')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Gender</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.bloodType}
+                onChange={() => toggleExportField('bloodType')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Blood Type</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.organs}
+                onChange={() => toggleExportField('organs')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Organs</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.contact}
+                onChange={() => toggleExportField('contact')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Contact Info</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.status}
+                onChange={() => toggleExportField('status')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Status</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.verified}
+                onChange={() => toggleExportField('verified')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Verification</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.registrationDate}
+                onChange={() => toggleExportField('registrationDate')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Reg. Date</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={exportFields.txHash}
+                onChange={() => toggleExportField('txHash')}
+                className="rounded border-gray-300 text-medical-600 focus:ring-medical-500"
+              />
+              <span>Tx Hash</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-sm font-medium mb-2">Date Range (Optional)</p>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              type="date"
+              value={exportFrom}
+              onChange={(e) => setExportFrom(e.target.value)}
+            />
+            <Input
+              type="date"
+              value={exportTo}
+              onChange={(e) => setExportTo(e.target.value)}
+            />
+          </div>
+        </div>
+      </div >
+      <DialogFooter>
+        <Button variant="outline" onClick={() => setExportOpen(false)}>
+          Cancel
+        </Button>
+        <Button
+          onClick={async () => {
+            const rows = filteredDonors
+              .map((d) => {
+                const row: any = {};
+                if (exportFields.donorId) row.DonorID = d.donor_id;
+                if (exportFields.name) row.Name = d.full_name;
+                if (exportFields.age) row.Age = d.age;
+                if (exportFields.gender) row.Gender = d.gender;
+                if (exportFields.bloodType) row.BloodType = d.blood_type;
+                if (exportFields.organs) row.Organs = d.organs_to_donate.join(", ");
+                if (exportFields.contact) {
+                  row.Phone = d.contact_phone;
+                  row.Email = d.contact_email;
+                }
+                if (exportFields.status) row.Status = d.is_active ? "ACTIVE" : "INACTIVE";
+                if (exportFields.verified) row.Verified = d.signature_verified ? "Yes" : "No";
+                if (exportFields.registrationDate) {
+                  row.Registered = new Date(d.registration_date)
+                    .toISOString()
+                    .slice(0, 10);
+                }
+                if (exportFields.txHash) row.TxHash = d.blockchain_hash || "";
+
+                // Always include for filtering
+                row._regDate = new Date(d.registration_date);
+                return row;
+              })
+              .filter((r) => {
+                if (
+                  exportFrom &&
+                  r._regDate < new Date(exportFrom)
+                )
+                  return false;
+                if (exportTo && r._regDate > new Date(exportTo))
+                  return false;
+
+                delete r._regDate; // Remove helper field
+                return true;
+              });
+
+            if (!rows.length) {
+              setExportOpen(false);
+              return;
             }
 
-            for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+            if (exportFormat === "pdf") {
+              const jsPDF = (await import("jspdf")).default;
+              const autoTable = (await import("jspdf-autotable"))
+                .default as any;
+              const doc = new jsPDF({ orientation: "landscape" });
+              const cols = Object.keys(rows[0]);
+              doc.text("Donor Report", 14, 14);
+              autoTable(doc, {
+                head: [cols],
+                body: rows.map((r) => cols.map((c) => (r as any)[c])),
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [22, 163, 74] },
+                startY: 20,
+                theme: "grid",
+              });
+              doc.save(`donors_${Date.now()}.pdf`);
+            } else {
+              const XLSX = (await import("xlsx")).default as any;
+              const ws = XLSX.utils.json_to_sheet(rows);
+              const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+
               for (let C = range.s.c; C <= range.e.c; ++C) {
-                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                const cellAddress = XLSX.utils.encode_col(C) + "1";
                 if (!ws[cellAddress]) continue;
                 ws[cellAddress].s = {
+                  fill: { fgColor: { rgb: "16A34A" } },
+                  font: { bold: true, color: { rgb: "FFFFFF" } },
                   alignment: { horizontal: "center", vertical: "center" }
                 };
               }
+
+              for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                  const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                  if (!ws[cellAddress]) continue;
+                  ws[cellAddress].s = {
+                    alignment: { horizontal: "center", vertical: "center" }
+                  };
+                }
+              }
+
+              const cols = Object.keys(rows[0]);
+              ws['!cols'] = cols.map(() => ({ wch: 15 }));
+
+              const wb = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(wb, ws, "Donors");
+              XLSX.writeFile(wb, `donors_${Date.now()}.xlsx`);
             }
-
-            const cols = Object.keys(rows[0]);
-            ws['!cols'] = cols.map(() => ({ wch: 15 }));
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Donors");
-            XLSX.writeFile(wb, `donors_${Date.now()}.xlsx`);
-          }
-          setExportOpen(false);
-        }}
-      >
-        Export {exportFormat === "pdf" ? "PDF" : "Excel"}
-      </Button>
-    </DialogFooter>
-        </DialogContent >
+            setExportOpen(false);
+          }}
+        >
+          Export {exportFormat === "pdf" ? "PDF" : "Excel"}
+        </Button>
+      </DialogFooter>
+    </DialogContent >
       </Dialog >
     </HospitalLayout >
   );
