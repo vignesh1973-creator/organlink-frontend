@@ -93,33 +93,8 @@ const fadeInScale = {
 };
 
 // Motion wrapper component
-function MotionSection({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const ref = useRef(null);
-  const isInView = useFramerInView(ref, { once: true, amount: 0.3 });
 
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={{
-        hidden: { opacity: 0, y: 50 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: {
-            duration: 0.6,
-            delay: delay,
-            ease: "easeOut"
-          }
-        }
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
+
 
 function CountUpNumber({
   value,
@@ -155,13 +130,30 @@ function CountUpNumber({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={isFramerInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={isFramerInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent break-words"
     >
       {formatted}
       {suffix}
+    </motion.div>
+  );
+}
+
+function MotionSection({ children, className = "", delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) {
+  const ref = useRef(null);
+  const isInView = useFramerInView(ref, { once: true, amount: 0.1, margin: "0px 0px -50px 0px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      className={className}
+    >
+      {children}
     </motion.div>
   );
 }
@@ -401,7 +393,7 @@ function TestimonialsCarousel() {
     <div className="relative max-w-6xl mx-auto">
       <div className="overflow-hidden">
         <motion.div
-          className="flex gap-8"
+          className="flex"
           animate={{
             x: `-${currentIndex * (100 / itemsPerPage)}%`
           }}
@@ -410,7 +402,7 @@ function TestimonialsCarousel() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              className={`flex-shrink-0 ${itemsPerPage === 1 ? 'w-full' : 'w-[calc(33.333%-1.33rem)]'}`}
+              className={`flex-shrink-0 px-4 ${itemsPerPage === 1 ? 'w-full' : 'w-[33.333%]'}`}
             >
               <Card className="h-full border-0 shadow-lg bg-white">
                 <CardContent className="p-8 flex flex-col h-full">
@@ -424,7 +416,7 @@ function TestimonialsCarousel() {
                     <img
                       src={testimonial.image}
                       alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover mr-4"
+                      className="w-16 h-16 md:w-12 md:h-12 rounded-full object-cover mr-4"
                     />
                     <div>
                       <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
@@ -600,7 +592,7 @@ export default function Index() {
       </section>
 
       {/* About Section */}
-      <section className="pt-8 pb-32 bg-gradient-to-br from-gray-50 to-white" id="about">
+      <section className="pt-8 pb-16 md:pb-32 bg-gradient-to-br from-gray-50 to-white" id="about">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <MotionSection className="space-y-8">
@@ -624,7 +616,7 @@ export default function Index() {
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center">
+                  <div className="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center">
                     <Shield className="h-6 w-6 text-white" />
                   </div>
                   <div>
@@ -634,7 +626,7 @@ export default function Index() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center">
+                  <div className="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center">
                     <Brain className="h-6 w-6 text-white" />
                   </div>
                   <div>
@@ -644,7 +636,7 @@ export default function Index() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center">
+                  <div className="flex-shrink-0 w-16 h-16 md:w-12 md:h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-xl flex items-center justify-center">
                     <Zap className="h-6 w-6 text-white" />
                   </div>
                   <div>
@@ -701,7 +693,7 @@ export default function Index() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.1, margin: "-50px" }}
             variants={staggerChildren}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
@@ -849,7 +841,7 @@ export default function Index() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             <motion.div variants={fadeInUp} className="text-center">
-              <div className="bg-medical-600 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <div className="bg-medical-600 w-20 h-20 md:w-16 md:h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
                 <span className="text-white text-xl font-bold">1</span>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -1096,198 +1088,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-32 bg-white" id="testimonials">
-        <div className="container mx-auto px-6">
-          <MotionSection className="text-center mb-20">
-            <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-green-100 rounded-full mb-6">
-              <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Testimonials
-              </span>
-            </div>
-            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              What Our
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Partners Say
-              </span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Trusted by hospitals and organizations worldwide for secure,
-              efficient organ matching and allocation.
-            </p>
-          </MotionSection>
-          <TestimonialsCarousel />
-        </div>
-      </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gray-50" id="faqs">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Everything you need to know about OrganLink.
-            </p>
-          </div>
-          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border">
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-1" className="px-6">
-                <AccordionTrigger className="py-5 text-left text-base">
-                  How is patient data secured?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600 leading-relaxed">
-                  We use blockchain for immutable records and IPFS for
-                  decentralized document storage. Encryption and strict access
-                  controls keep data private while enabling necessary medical
-                  access.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2" className="px-6">
-                <AccordionTrigger className="py-5 text-left text-base">
-                  What is the policy voting system?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600 leading-relaxed">
-                  Organizations propose and vote on policies. Once approved,
-                  policies are transparently recorded and enforced across the
-                  network.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3" className="px-6">
-                <AccordionTrigger className="py-5 text-left text-base">
-                  How does AI matching work?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600 leading-relaxed">
-                  Our algorithms consider blood group, tissue type, urgency,
-                  distance and more to recommend optimal donor–patient matches.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-20 bg-white" id="contact">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Get in Touch
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Ready to revolutionize organ transplant matching at your
-              institution?
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="space-y-6">
-              <div className="flex items-start space-x-3">
-                <Mail className="h-5 w-5 text-medical-600 mt-1" />
-                <div>
-                  <div className="text-sm text-gray-500">Email</div>
-                  <div className="font-medium text-gray-900">
-                    support@organlink.org
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Phone className="h-5 w-5 text-medical-600 mt-1" />
-                <div>
-                  <div className="text-sm text-gray-500">Phone</div>
-                  <div className="font-medium text-gray-900">
-                    +1 (800) ORGAN
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-medical-600 mt-1" />
-                <div>
-                  <div className="text-sm text-gray-500">Location</div>
-                  <div className="font-medium text-gray-900">
-                    Healthcare Innovation Hub
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <ContactForm />
-          </div>
-        </div>
-      </section>
-
-      {/* Portal Access Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Access Your Portal
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Secure, role-based access for hospitals, organizations, and
-              administrators.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-medical-200">
-              <CardContent className="p-8 text-center">
-                <div className="bg-medical-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <Activity className="h-8 w-8 text-medical-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Hospital Portal
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Register donors and patients, manage AI matching, and receive
-                  real-time notifications.
-                </p>
-                <Button className="w-full" asChild>
-                  <Link to="/hospital/login">Access Hospital Portal</Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-medical-200">
-              <CardContent className="p-8 text-center">
-                <div className="bg-medical-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <Users className="h-8 w-8 text-medical-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Organization Portal
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Propose policies, participate in voting, and manage
-                  organizational guidelines.
-                </p>
-                <Button className="w-full" asChild>
-                  <Link to="/organization/login">
-                    Access Organization Portal
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-medical-200">
-              <CardContent className="p-8 text-center">
-                <div className="bg-medical-100 w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <Award className="h-8 w-8 text-medical-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Admin Portal
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Manage hospitals, organizations, monitor blockchain logs, and
-                  system metrics.
-                </p>
-                <Button className="w-full" asChild>
-                  <Link to="/admin/login">Access Admin Portal</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
     </Layout >
   );
 }

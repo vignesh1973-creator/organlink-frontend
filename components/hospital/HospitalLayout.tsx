@@ -6,7 +6,7 @@ import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useHospitalNotifications } from "@/contexts/HospitalNotificationContext";
 import HospitalSidebar from "./HospitalSidebar";
 import HospitalNotificationDropdown from "./HospitalNotificationDropdown";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { setPortalTitle, PORTAL_TITLES } from "@/utils/pageTitle";
 
 interface HospitalLayoutProps {
@@ -63,6 +63,9 @@ export default function HospitalLayout({
       {/* Mobile Sidebar Sheet */}
       <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0">
+          <div className="sr-only">
+            <SheetTitle>Navigation Menu</SheetTitle>
+          </div>
           <HospitalSidebar onNavigate={() => setMobileSidebarOpen(false)} />
         </SheetContent>
       </Sheet>

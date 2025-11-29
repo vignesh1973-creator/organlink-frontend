@@ -36,6 +36,7 @@ import {
   Filter,
   RefreshCw,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import HospitalLayout from "@/components/hospital/HospitalLayout";
@@ -148,8 +149,23 @@ export default function HospitalReports() {
   if (loading) {
     return (
       <HospitalLayout title="Reports & Analytics" subtitle="Comprehensive data insights and performance metrics">
-        <div className="flex items-center justify-center min-h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-medical-600"></div>
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between">
+            <div className="flex gap-3">
+              <Skeleton className="h-10 w-40" />
+              <Skeleton className="h-10 w-24" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Skeleton className="h-[400px] w-full rounded-xl" />
+            <Skeleton className="h-[400px] w-full rounded-xl" />
+          </div>
         </div>
       </HospitalLayout>
     );

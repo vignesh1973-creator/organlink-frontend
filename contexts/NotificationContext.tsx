@@ -58,7 +58,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
         if (response.ok) {
           const data = await response.json();
-          
+
+          // Get read notifications from local storage
+          const readIds = JSON.parse(localStorage.getItem("admin_read_notifications") || "[]");
+
           // Convert recent activities to notifications
           const activityNotifications: Notification[] = (data.recentActivities || []).map((activity: any, index: number) => {
             const getNotifType = (actType: string): "security" | "warning" | "success" | "info" => {
@@ -80,14 +83,18 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
               return `${diffDays}d ago`;
             };
 
+            // Generate a stable ID based on content if possible, or use index + timestamp hash
+            // For now using index + 1 as per original code, but in real app should use unique ID from DB
+            const id = index + 1;
+
             return {
-              id: index + 1,
+              id: id,
               title: activity.title || "System Event",
               message: activity.description || activity.message || "",
               fullMessage: activity.description || activity.message || "",
               type: getNotifType(activity.type),
               time: getTimeAgo(activity.timestamp),
-              read: false,
+              read: readIds.includes(id),
             };
           });
 
@@ -101,7 +108,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     };
 
     fetchSystemNotifications();
-    
+
     // Refresh every 30 seconds
     const interval = setInterval(fetchSystemNotifications, 30000);
     return () => clearInterval(interval);
@@ -110,13 +117,31 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAsRead = (id: number) => {
-    setNotifications((prev) =>
-      prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)),
-    );
+    setNotifications((prev) => {
+      const updated = prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif));
+
+      // Update local storage
+      const readIds = JSON.parse(localStorage.getItem("admin_read_notifications") || "[]");
+      if (!readIds.includes(id)) {
+        readIds.push(id);
+        localStorage.setItem("admin_read_notifications", JSON.stringify(readIds));
+      }
+
+      return updated;
+    });
   };
 
   const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
+    setNotifications((prev) => {
+      const updated = prev.map((notif) => ({ ...notif, read: true }));
+
+      // Update local storage
+      const readIds = JSON.parse(localStorage.getItem("admin_read_notifications") || "[]");
+      const newReadIds = [...new Set([...readIds, ...prev.map(n => n.id)])];
+      localStorage.setItem("admin_read_notifications", JSON.stringify(newReadIds));
+
+      return updated;
+    });
   };
 
   const deleteNotification = (id: number) => {

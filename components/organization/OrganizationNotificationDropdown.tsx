@@ -58,12 +58,12 @@ export default function OrganizationNotificationDropdown({ isOpen, onClose }: Pr
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       // Update local state to mark as read
-      setNotifications(prev => 
-        prev.map(n => 
-          n.notification_id === notification.notification_id 
-            ? { ...n, is_read: true } 
+      setNotifications(prev =>
+        prev.map(n =>
+          n.notification_id === notification.notification_id
+            ? { ...n, is_read: true }
             : n
         )
       );
@@ -106,71 +106,79 @@ export default function OrganizationNotificationDropdown({ isOpen, onClose }: Pr
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-0 top-12 w-96 z-50">
-      <Card className="shadow-xl border border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-                Mark all read
-              </Button>
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="h-4 w-4" />
-              </Button>
+    <>
+      {/* Mobile Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/20 z-40 md:hidden"
+        onClick={onClose}
+      />
+
+      {/* Dropdown */}
+      <div className="fixed left-4 right-4 top-20 z-50 md:absolute md:left-auto md:right-0 md:top-12 md:w-96">
+        <Card className="shadow-xl border border-gray-200 w-full">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
+                  Mark all read
+                </Button>
+                <Button variant="ghost" size="sm" onClick={onClose}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="max-h-96 overflow-y-auto">
-          {loading ? (
-            <div className="p-8 text-center text-gray-500">Loading...</div>
-          ) : notifications.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">No notifications</div>
-          ) : (
-            notifications.map((notification) => {
-              const iconData = getIcon(notification.title);
-              const IconComponent = iconData.icon;
-              return (
-                <div
-                  key={notification.notification_id}
-                  onClick={() => handleNotificationClick(notification)}
-                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                    !notification.is_read ? 'bg-blue-50/30' : ''
-                  }`}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className={`p-2 rounded-lg ${iconData.bg}`}>
-                      <IconComponent className={`h-4 w-4 ${iconData.color}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900 text-sm">{notification.title}</p>
-                          <p className="text-gray-600 text-sm mt-1">{notification.message}</p>
-                          <p className="text-gray-400 text-xs mt-2">{getTimeAgo(notification.created_at)}</p>
+
+          <div className="max-h-[60vh] md:max-h-96 overflow-y-auto">
+            {loading ? (
+              <div className="p-8 text-center text-gray-500">Loading...</div>
+            ) : notifications.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">No notifications</div>
+            ) : (
+              notifications.map((notification) => {
+                const iconData = getIcon(notification.title);
+                const IconComponent = iconData.icon;
+                return (
+                  <div
+                    key={notification.notification_id}
+                    onClick={() => handleNotificationClick(notification)}
+                    className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${!notification.is_read ? 'bg-blue-50/30' : ''
+                      }`}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className={`p-2 rounded-lg ${iconData.bg}`}>
+                        <IconComponent className={`h-4 w-4 ${iconData.color}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 text-sm">{notification.title}</p>
+                            <p className="text-gray-600 text-sm mt-1">{notification.message}</p>
+                            <p className="text-gray-400 text-xs mt-2">{getTimeAgo(notification.created_at)}</p>
+                          </div>
+                          {!notification.is_read && (
+                            <div className="w-2 h-2 bg-blue-600 rounded-full mt-1 ml-2"></div>
+                          )}
                         </div>
-                        {!notification.is_read && (
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mt-1 ml-2"></div>
-                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-        
-        <div className="p-4 border-t border-gray-200">
-          <Button 
-            variant="ghost" 
-            className="w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-          >
-            View All Notifications
-          </Button>
-        </div>
-      </Card>
-    </div>
+                );
+              })
+            )}
+          </div>
+
+          <div className="p-4 border-t border-gray-200">
+            <Button
+              variant="ghost"
+              className="w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            >
+              View All Notifications
+            </Button>
+          </div>
+        </Card>
+      </div>
+    </>
   );
 }

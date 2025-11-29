@@ -50,7 +50,7 @@ export default function BlockchainLogs() {
       key: "transaction_hash",
       label: "Transaction Hash",
       render: (value: string) => (
-        <div className="max-w-[150px] sm:max-w-[200px]">
+        <div className="max-w-[100px] sm:max-w-[200px]">
           <div className="font-mono text-sm text-gray-900 truncate" title={value}>
             {value}
           </div>

@@ -41,6 +41,19 @@ export default function AdminLayout({
     navigate("/admin/login");
   };
 
+  // Lock body scroll when in admin layout to prevent double scrollbars
+  useEffect(() => {
+    // Save original overflow style
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    // Lock body scroll
+    document.body.style.overflow = 'hidden';
+
+    // Restore on unmount
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -54,7 +67,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-50">
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-gray-50">
       {/* Sidebar - Desktop */}
       <div className="hidden md:block w-64 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
         <AdminSidebar />

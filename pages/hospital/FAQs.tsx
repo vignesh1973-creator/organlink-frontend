@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HelpCircle, Heart, Shield, Zap } from "lucide-react";
 import HospitalLayout from "@/components/hospital/HospitalLayout";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
 
 const faqData = [
   {
@@ -89,6 +91,33 @@ const faqData = [
 ];
 
 export default function HospitalFAQs() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading for consistent UX
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <HospitalLayout title="Frequently Asked Questions" subtitle="Get answers to common questions about the OrganLink system">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <Skeleton className="h-40 w-full rounded-xl" />
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="space-y-2">
+              <Skeleton className="h-14 w-full rounded-lg" />
+              <div className="space-y-2 pl-4">
+                <Skeleton className="h-12 w-full rounded-lg" />
+                <Skeleton className="h-12 w-full rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </HospitalLayout>
+    );
+  }
+
   return (
     <HospitalLayout title="Frequently Asked Questions" subtitle="Get answers to common questions about the OrganLink system">
       <div className="max-w-4xl mx-auto space-y-8">

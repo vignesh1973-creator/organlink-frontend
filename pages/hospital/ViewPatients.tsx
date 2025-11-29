@@ -43,7 +43,9 @@ import {
   Eye,
   ExternalLink,
   Trash2,
+  Download,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import HospitalLayout from "@/components/hospital/HospitalLayout";
@@ -295,9 +297,19 @@ export default function ViewPatients() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-medical-600"></div>
-      </div>
+      <HospitalLayout title="Patient Management" subtitle="Manage and track patient registrations">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-10 w-48" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-64 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </HospitalLayout>
     );
   }
 
@@ -311,12 +323,13 @@ export default function ViewPatients() {
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center space-x-4"></div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 onClick={() => setExportOpen(true)}
                 className="w-full sm:w-auto"
               >
+                <Download className="h-4 w-4 mr-2" />
                 Export Data
               </Button>
               <Link
@@ -388,10 +401,10 @@ export default function ViewPatients() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div >
 
         {/* Filters */}
-        <Card className="mb-6">
+        < Card className="mb-6" >
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div className="relative">
@@ -463,169 +476,171 @@ export default function ViewPatients() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card >
 
         {/* Patients List */}
-        <div className="space-y-4">
-          {filteredPatients.length > 0 ? (
-            filteredPatients.map((patient) => (
-              <Card
-                key={patient.id}
-                className="hover:shadow-md transition-shadow"
-              >
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
-                        <ProfileAvatar
-                          photoBase64={patient.profile_photo}
-                          gender={patient.gender}
-                          fullName={patient.full_name}
-                          size="md"
-                        />
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {patient.full_name}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            ID: {patient.hospital_display_id ? `#${patient.hospital_display_id}` : patient.patient_id} • Age: {patient.age} •{" "}
-                            {patient.gender}
-                          </p>
+        < div className="space-y-4" >
+          {
+            filteredPatients.length > 0 ? (
+              filteredPatients.map((patient) => (
+                <Card
+                  key={patient.patient_id}
+                  className="hover:shadow-md transition-shadow"
+                >
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+                          <ProfileAvatar
+                            photoBase64={patient.profile_photo}
+                            gender={patient.gender}
+                            fullName={patient.full_name}
+                            size="md"
+                          />
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {patient.full_name}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              ID: {patient.hospital_display_id ? `#${patient.hospital_display_id}` : patient.patient_id} • Age: {patient.age} •{" "}
+                              {patient.gender}
+                            </p>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <Badge className={getStatusColor(patient.status)}>
-                          {getStatusIcon(patient.status)} {patient.status || "Waiting"}
-                        </Badge>
-                        <Badge
-                          className={getUrgencyColor(patient.urgency_level)}
-                        >
-                          {patient.urgency_level}
-                        </Badge>
-                        <Badge variant="outline">{patient.blood_type}</Badge>
-                        <Badge className="bg-blue-100 text-blue-800">
-                          {patient.organ_needed}
-                        </Badge>
-                        {patient.signature_verified && (
-                          <Badge className="bg-green-100 text-green-800">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Verified
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          <Badge className={getStatusColor(patient.status)}>
+                            {getStatusIcon(patient.status)} {patient.status || "Waiting"}
                           </Badge>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-                        <div className="flex items-center text-gray-600">
-                          <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span className="truncate">{patient.contact_phone}</span>
+                          <Badge
+                            className={getUrgencyColor(patient.urgency_level)}
+                          >
+                            {patient.urgency_level}
+                          </Badge>
+                          <Badge variant="outline">{patient.blood_type}</Badge>
+                          <Badge className="bg-blue-100 text-blue-800">
+                            {patient.organ_needed}
+                          </Badge>
+                          {patient.signature_verified && (
+                            <Badge className="bg-green-100 text-green-800">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Verified
+                            </Badge>
+                          )}
                         </div>
-                        {patient.contact_email && (
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                           <div className="flex items-center text-gray-600">
-                            <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
-                            <span className="truncate">{patient.contact_email}</span>
+                            <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">{patient.contact_phone}</span>
+                          </div>
+                          {patient.contact_email && (
+                            <div className="flex items-center text-gray-600">
+                              <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
+                              <span className="truncate">{patient.contact_email}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center text-gray-600">
+                            <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">Reg: {formatDate(patient.registration_date)}</span>
+                          </div>
+                        </div>
+
+                        {patient.medical_condition && (
+                          <div className="mt-3">
+                            <p className="text-sm text-gray-600">
+                              <strong>Medical Condition:</strong>{" "}
+                              {patient.medical_condition}
+                            </p>
                           </div>
                         )}
-                        <div className="flex items-center text-gray-600">
-                          <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span className="truncate">Reg: {formatDate(patient.registration_date)}</span>
-                        </div>
+
                       </div>
 
-                      {patient.medical_condition && (
-                        <div className="mt-3">
-                          <p className="text-sm text-gray-600">
-                            <strong>Medical Condition:</strong>{" "}
-                            {patient.medical_condition}
-                          </p>
-                        </div>
-                      )}
-
-                    </div>
-
-                    <div className="grid grid-cols-4 gap-2 md:flex md:flex-col md:space-y-2 md:ml-6 mt-2 md:mt-0 border-t md:border-t-0 pt-4 md:pt-0">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditPatient(patient)}
-                        title="Edit Details"
-                        className="w-full"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openDeleteConfirm(patient)}
-                        disabled={deletingPatient === patient.patient_id}
-                        className="text-red-600 hover:text-red-700 hover:border-red-300 w-full"
-                        title="Delete patient"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-
-                      {patient.signature_ipfs_hash && (
+                      <div className="grid grid-cols-4 gap-2 md:flex md:flex-col md:space-y-2 md:ml-6 mt-2 md:mt-0 border-t md:border-t-0 pt-4 md:pt-0">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            window.open(
-                              `/api/hospital/upload/ipfs/${patient.signature_ipfs_hash}`,
-                              "_blank",
-                            )
-                          }
-                          title="View Document"
+                          onClick={() => handleEditPatient(patient)}
+                          title="Edit Details"
                           className="w-full"
                         >
-                          <ExternalLink className="h-4 w-4" />
+                          <Eye className="h-4 w-4" />
                         </Button>
-                      )}
 
-                      {patient.blockchain_hash && (
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            window.open(
-                              `https://sepolia.etherscan.io/tx/${patient.blockchain_hash}`,
-                              "_blank",
-                            )
-                          }
-                          title="View on Blockchain"
-                          className="w-full"
+                          onClick={() => openDeleteConfirm(patient)}
+                          disabled={deletingPatient === patient.patient_id}
+                          className="text-red-600 hover:text-red-700 hover:border-red-300 w-full"
+                          title="Delete patient"
                         >
-                          <ExternalLink className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
-                      )}
+
+                        {patient.signature_ipfs_hash && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              window.open(
+                                `/api/hospital/upload/ipfs/${patient.signature_ipfs_hash}`,
+                                "_blank",
+                              )
+                            }
+                            title="View Document"
+                            className="w-full"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+
+                        {patient.blockchain_hash && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              window.open(
+                                `https://sepolia.etherscan.io/tx/${patient.blockchain_hash}`,
+                                "_blank",
+                              )
+                            }
+                            title="View on Blockchain"
+                            className="w-full"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No Patients Found
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    {patients.length === 0
+                      ? "No patients have been registered yet."
+                      : "No patients match your current filter criteria."}
+                  </p>
+                  <Link to="/hospital/patients/register">
+                    <Button className="bg-medical-600 hover:bg-medical-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Register First Patient
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
-            ))
-          ) : (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No Patients Found
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {patients.length === 0
-                    ? "No patients have been registered yet."
-                    : "No patients match your current filter criteria."}
-                </p>
-                <Link to="/hospital/patients/register">
-                  <Button className="bg-medical-600 hover:bg-medical-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Register First Patient
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
+            )
+          }
+        </div >
+      </div >
 
       <EditPatientModal
         patient={editingPatient}
@@ -796,6 +811,6 @@ export default function ViewPatients() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </HospitalLayout>
+    </HospitalLayout >
   );
 }

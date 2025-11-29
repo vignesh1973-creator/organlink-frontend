@@ -63,13 +63,13 @@ export default function AdminLogin() {
         {/* Left side - Login Form */}
         <div className="flex-1 flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <div className="flex justify-center mb-4">
                 <div className="bg-medical-600 p-3 rounded-2xl">
                   <Heart className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                 Admin Login
               </h2>
               <p className="text-sm text-gray-600">
@@ -77,13 +77,13 @@ export default function AdminLogin() {
               </p>
             </div>
 
-            <Card className="shadow-lg border-0">
-              <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+            <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
+              <CardContent className="p-5 sm:p-10">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   <div>
                     <Label
                       htmlFor="username"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-base font-medium text-gray-700"
                     >
                       Username *
                     </Label>
@@ -94,7 +94,7 @@ export default function AdminLogin() {
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="admin"
                       required
-                      className="mt-1 h-12"
+                      className="mt-1 h-11 sm:h-12 text-base"
                       disabled={isLoading}
                     />
                   </div>
@@ -102,7 +102,7 @@ export default function AdminLogin() {
                   <div>
                     <Label
                       htmlFor="password"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-base font-medium text-gray-700"
                     >
                       Password *
                     </Label>
@@ -114,7 +114,7 @@ export default function AdminLogin() {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
-                        className="h-12 pr-10"
+                        className="h-11 sm:h-12 text-base pr-10"
                         disabled={isLoading}
                       />
                       <button
@@ -139,7 +139,7 @@ export default function AdminLogin() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gray-700 hover:bg-gray-800 text-white"
+                    className="w-full h-11 sm:h-12 text-base sm:text-lg bg-gray-700 hover:bg-gray-800 text-white transition-all shadow-lg hover:shadow-xl"
                     disabled={isLoading || !username || !password}
                   >
                     {isLoading ? "Signing in..." : "Sign In"}
@@ -157,7 +157,10 @@ export default function AdminLogin() {
         </div>
 
         {/* Right side - Image and Content */}
-        <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-900 via-slate-800 to-gray-900 relative">
+
+
+        {/* Right side - Image and Content */}
+        < div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-blue-900 via-slate-800 to-gray-900 relative" >
           <div className="flex flex-col justify-center px-12 py-12 text-white relative z-10">
             <div className="mb-8">
               <img
@@ -183,11 +186,11 @@ export default function AdminLogin() {
           <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full"></div>
           <div className="absolute bottom-20 left-10 w-16 h-16 bg-blue-400/20 rounded-full"></div>
           <div className="absolute top-1/3 right-1/4 w-12 h-12 bg-white/5 rounded-full"></div>
-        </div>
-      </div>
+        </div >
+      </div >
 
       {/* Footer */}
-      <div className="bg-gray-50 lg:bg-transparent py-4 text-center border-t lg:border-t-0">
+      < div className="bg-gray-50 lg:bg-transparent py-4 text-center border-t lg:border-t-0" >
         <p className="text-xs text-gray-500">
           © 2025 OrganLink. All rights reserved.
         </p>
@@ -204,7 +207,7 @@ export default function AdminLogin() {
             Support
           </a>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

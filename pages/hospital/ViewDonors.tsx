@@ -49,6 +49,7 @@ import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import HospitalLayout from "@/components/hospital/HospitalLayout";
 import EditDonorModal from "@/components/hospital/EditDonorModal";
+import { Skeleton } from "@/components/ui/skeleton";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -127,7 +128,7 @@ export default function ViewDonors() {
       Status: d.is_active ? "ACTIVE" : "INACTIVE",
       Registered: new Date(d.registration_date).toISOString().slice(0, 10),
       Verified: d.signature_verified ? "Yes" : "No",
-      TxHash: d.blockchain_tx_hash || "",
+      TxHash: d.blockchain_hash || "",
     }));
 
   const exportCSV = () => {
@@ -173,6 +174,10 @@ export default function ViewDonors() {
     });
     doc.save(`donors_${Date.now()}.pdf`);
   };
+
+  useEffect(() => {
+    fetchDonors();
+  }, []);
 
   useEffect(() => {
     fetchDonors();
@@ -325,9 +330,19 @@ export default function ViewDonors() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-medical-600"></div>
-      </div>
+      <HospitalLayout title="Donor Management" subtitle="Manage and track organ donors">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-10 w-48" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-64 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </HospitalLayout>
     );
   }
 
@@ -341,7 +356,7 @@ export default function ViewDonors() {
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center space-x-4"></div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 onClick={() => setExportOpen(true)}
@@ -361,7 +376,7 @@ export default function ViewDonors() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        < div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" >
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -415,10 +430,10 @@ export default function ViewDonors() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div >
 
         {/* Filters */}
-        <Card className="mb-6">
+        < Card className="mb-6" >
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
@@ -475,14 +490,14 @@ export default function ViewDonors() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card >
 
         {/* Donors List */}
         <div className="space-y-4">
           {filteredDonors.length > 0 ? (
             filteredDonors.map((donor) => (
               <Card
-                key={donor.id}
+                key={donor.donor_id}
                 className="hover:shadow-md transition-shadow"
               >
                 <CardContent className="p-6">
@@ -548,14 +563,16 @@ export default function ViewDonors() {
                         </div>
                       </div>
 
-                      {donor.medical_history && (
-                        <div className="mt-3">
-                          <p className="text-sm text-gray-600">
-                            <strong>Medical History:</strong>{" "}
-                            {donor.medical_history}
-                          </p>
-                        </div>
-                      )}
+                      {
+                        donor.medical_history && (
+                          <div className="mt-3">
+                            <p className="text-sm text-gray-600">
+                              <strong>Medical History:</strong>{" "}
+                              {donor.medical_history}
+                            </p>
+                          </div>
+                        )
+                      }
 
                       <div className="mt-3">
                         <p className="text-sm text-gray-600">
@@ -563,7 +580,7 @@ export default function ViewDonors() {
                           {donor.emergency_contact} - {donor.emergency_phone}
                         </p>
                       </div>
-                    </div>
+                    </div >
 
                     <div className="flex md:flex-col gap-2 md:space-y-2 md:ml-6">
                       <Button
@@ -595,7 +612,7 @@ export default function ViewDonors() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
 
-                      {donor.blockchain_tx_hash && (
+                      {donor.blockchain_hash && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -626,9 +643,9 @@ export default function ViewDonors() {
                         </Button>
                       )}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </div >
+                </CardContent >
+              </Card >
             ))
           ) : (
             <Card>
@@ -650,9 +667,10 @@ export default function ViewDonors() {
                 </Link>
               </CardContent>
             </Card>
-          )}
-        </div>
-      </div>
+          )
+          }
+        </div >
+      </div >
 
       <EditDonorModal
         donor={editingDonor}
@@ -661,95 +679,97 @@ export default function ViewDonors() {
         onUpdate={handleDonorUpdate}
       />
 
-      {viewDonor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Donor Details</h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setViewDonor(null)}
-              >
-                Close
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="font-medium text-gray-700">
-                  Personal Information
-                </p>
-                <p className="text-gray-600 mt-1">{viewDonor.full_name}</p>
-                <p className="text-gray-600">
-                  {viewDonor.age} years • {viewDonor.gender}
-                </p>
-                <p className="text-gray-600">
-                  Blood Type: {viewDonor.blood_type}
-                </p>
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Contact</p>
-                <p className="text-gray-600 mt-1">{viewDonor.contact_phone}</p>
-                {viewDonor.contact_email && (
-                  <p className="text-gray-600">{viewDonor.contact_email}</p>
-                )}
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Organs</p>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {viewDonor.organs_to_donate.map((o) => (
-                    <Badge key={o} className="bg-red-100 text-red-800">
-                      {o}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Blockchain</p>
-                {viewDonor.blockchain_hash &&
-                  viewDonor.blockchain_hash.startsWith("0x") ? (
-                  <a
-                    className="text-medical-600 underline"
-                    target="_blank"
-                    href={`https://sepolia.etherscan.io/tx/${viewDonor.blockchain_hash}`}
-                  >
-                    View on Etherscan
-                  </a>
-                ) : (
-                  <p className="text-gray-600">
-                    {viewDonor.blockchain_hash
-                      ? "Demo TX (not on-chain)"
-                      : "Not registered"}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              {viewDonor.signature_ipfs_hash && (
+      {
+        viewDonor && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Donor Details</h3>
                 <Button
                   variant="outline"
-                  onClick={() =>
-                    window.open(
-                      `https://gateway.pinata.cloud/ipfs/${viewDonor.signature_ipfs_hash}`,
-                      "_blank",
-                    )
-                  }
+                  size="sm"
+                  onClick={() => setViewDonor(null)}
                 >
-                  View Document
+                  Close
                 </Button>
-              )}
-              <Button
-                onClick={() => {
-                  setViewDonor(null);
-                  handleEditDonor(viewDonor);
-                }}
-              >
-                Edit
-              </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="font-medium text-gray-700">
+                    Personal Information
+                  </p>
+                  <p className="text-gray-600 mt-1">{viewDonor.full_name}</p>
+                  <p className="text-gray-600">
+                    {viewDonor.age} years • {viewDonor.gender}
+                  </p>
+                  <p className="text-gray-600">
+                    Blood Type: {viewDonor.blood_type}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Contact</p>
+                  <p className="text-gray-600 mt-1">{viewDonor.contact_phone}</p>
+                  {viewDonor.contact_email && (
+                    <p className="text-gray-600">{viewDonor.contact_email}</p>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Organs</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {viewDonor.organs_to_donate.map((o) => (
+                      <Badge key={o} className="bg-red-100 text-red-800">
+                        {o}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Blockchain</p>
+                  {viewDonor.blockchain_hash &&
+                    viewDonor.blockchain_hash.startsWith("0x") ? (
+                    <a
+                      className="text-medical-600 underline"
+                      target="_blank"
+                      href={`https://sepolia.etherscan.io/tx/${viewDonor.blockchain_hash}`}
+                    >
+                      View on Etherscan
+                    </a>
+                  ) : (
+                    <p className="text-gray-600">
+                      {viewDonor.blockchain_hash
+                        ? "Demo TX (not on-chain)"
+                        : "Not registered"}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                {viewDonor.signature_ipfs_hash && (
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      window.open(
+                        `https://gateway.pinata.cloud/ipfs/${viewDonor.signature_ipfs_hash}`,
+                        "_blank",
+                      )
+                    }
+                  >
+                    View Document
+                  </Button>
+                )}
+                <Button
+                  onClick={() => {
+                    setViewDonor(null);
+                    handleEditDonor(viewDonor);
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       <AlertDialog open={!!confirmDeleteDonor}>
         <AlertDialogContent>
@@ -921,6 +941,6 @@ export default function ViewDonors() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </HospitalLayout>
+    </HospitalLayout >
   );
 }

@@ -250,8 +250,8 @@ export default function ManageOrganizations() {
             </span>
           </div>
           <Button onClick={() => navigate("/admin/organizations/register")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Organization
+            <Plus className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Add Organization</span>
           </Button>
         </div>
 

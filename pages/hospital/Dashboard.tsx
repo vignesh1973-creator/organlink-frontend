@@ -127,6 +127,24 @@ export default function HospitalDashboard() {
     );
   }
 
+  if (loading) {
+    return (
+      <HospitalLayout title="Dashboard" subtitle="Overview of hospital activities">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Skeleton className="h-96 w-full rounded-xl" />
+            <Skeleton className="h-96 w-full rounded-xl" />
+          </div>
+        </div>
+      </HospitalLayout>
+    );
+  }
+
   return (
     <HospitalLayout
       title={`Welcome back, ${hospital?.hospital_name || "Hospital"}`}
@@ -134,15 +152,15 @@ export default function HospitalDashboard() {
     >
       <div className="max-w-7xl mx-auto">
         {/* Quick Action Buttons */}
-        <div className="mb-8 flex gap-3">
-          <Link to="/hospital/patients/register">
-            <Button className="bg-medical-600 hover:bg-medical-700">
+        <div className="mb-8 flex flex-col sm:flex-row gap-3">
+          <Link to="/hospital/patients/register" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-medical-600 hover:bg-medical-700">
               <Plus className="h-4 w-4 mr-2" />
               Register Patient
             </Button>
           </Link>
-          <Link to="/hospital/donors/register">
-            <Button variant="outline">
+          <Link to="/hospital/donors/register" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">
               <Heart className="h-4 w-4 mr-2" />
               Register Donor
             </Button>
@@ -356,15 +374,15 @@ export default function HospitalDashboard() {
                     >
                       <div
                         className={`p-2 rounded-lg ${activity.type === "patient"
-                            ? "bg-blue-100"
-                            : "bg-green-100"
+                          ? "bg-blue-100"
+                          : "bg-green-100"
                           }`}
                       >
                         {activity.type === "patient" ? (
                           <Users
                             className={`h-4 w-4 ${activity.type === "patient"
-                                ? "text-blue-600"
-                                : "text-green-600"
+                              ? "text-blue-600"
+                              : "text-green-600"
                               }`}
                           />
                         ) : (

@@ -54,19 +54,19 @@ export default function OrganizationLogin() {
           Back to Home
         </a>
       </div>
-      
+
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* Left side - Login Form */}
         <div className="flex-1 flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <div className="flex justify-center mb-4">
                 <div className="bg-medical-600 p-3 rounded-2xl">
                   <Building2 className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                 Organization Login
               </h2>
               <p className="text-sm text-gray-600">
@@ -74,13 +74,13 @@ export default function OrganizationLogin() {
               </p>
             </div>
 
-            <Card className="shadow-lg border-0">
-              <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+            <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
+              <CardContent className="p-5 sm:p-10">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   <div>
                     <Label
                       htmlFor="email"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-base font-medium text-gray-700"
                     >
                       Email Address *
                     </Label>
@@ -91,7 +91,7 @@ export default function OrganizationLogin() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="organization@example.com"
                       required
-                      className="mt-1 h-12"
+                      className="mt-1 h-11 sm:h-12 text-base"
                       disabled={isLoading}
                     />
                   </div>
@@ -99,7 +99,7 @@ export default function OrganizationLogin() {
                   <div>
                     <Label
                       htmlFor="password"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-base font-medium text-gray-700"
                     >
                       Password *
                     </Label>
@@ -111,7 +111,7 @@ export default function OrganizationLogin() {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
-                        className="h-12 pr-10"
+                        className="h-11 sm:h-12 text-base pr-10"
                         disabled={isLoading}
                       />
                       <button
@@ -136,7 +136,7 @@ export default function OrganizationLogin() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-medical-600 hover:bg-medical-700 text-white"
+                    className="w-full h-11 sm:h-12 text-base sm:text-lg bg-medical-600 hover:bg-medical-700 text-white transition-all shadow-lg hover:shadow-xl"
                     disabled={isLoading || !email || !password}
                   >
                     {isLoading ? "Signing in..." : "Sign In"}
@@ -150,6 +150,7 @@ export default function OrganizationLogin() {
 
         {/* Right side - Image and Content */}
         <div className="hidden lg:flex lg:flex-1 bg-gradient-to-br from-green-900 via-emerald-800 to-teal-900 relative">
+
           <div className="flex flex-col justify-center px-12 py-12 text-white relative z-10">
             <div className="mb-8">
               <img
@@ -182,6 +183,6 @@ export default function OrganizationLogin() {
           © 2025 OrganLink. All rights reserved.
         </p>
       </div>
-    </div>
+    </div >
   );
 }

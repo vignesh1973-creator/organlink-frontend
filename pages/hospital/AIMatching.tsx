@@ -29,6 +29,7 @@ import {
 import { useHospitalAuth } from "@/contexts/HospitalAuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import HospitalLayout from "@/components/hospital/HospitalLayout";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatToIST } from "@/utils/date";
 
 interface Patient {
@@ -101,10 +102,17 @@ export default function AIMatching() {
   } = useToast();
 
   useEffect(() => {
-    fetchPatients();
-    fetchIncomingMatches();
-    fetchOutgoingRequests();
-    fetchReceivedRequests();
+    const init = async () => {
+      setLoading(true);
+      await Promise.all([
+        fetchPatients(),
+        fetchIncomingMatches(),
+        fetchOutgoingRequests(),
+        fetchReceivedRequests()
+      ]);
+      setLoading(false);
+    };
+    init();
   }, []);
 
   useEffect(() => {
@@ -440,6 +448,27 @@ export default function AIMatching() {
     if (score >= 60) return "bg-yellow-100 text-yellow-800";
     return "bg-red-100 text-red-800";
   };
+
+  if (loading && patients.length === 0) {
+    return (
+      <HospitalLayout
+        title="AI Organ Matching"
+        subtitle="Advanced AI-powered organ matching system"
+      >
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Skeleton className="h-[400px] w-full rounded-xl" />
+            <Skeleton className="h-[400px] w-full rounded-xl" />
+          </div>
+        </div>
+      </HospitalLayout>
+    );
+  }
 
   return (
     <HospitalLayout

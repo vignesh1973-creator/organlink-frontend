@@ -199,8 +199,8 @@ export default function HospitalLogin() {
               </p>
             </div>
 
-            <Card className="shadow-lg border-0">
-              <CardContent className="p-8">
+            <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
+              <CardContent className="p-8 sm:p-10">
                 {/* Step 1: Location Selection */}
                 {currentStep === 1 && (
                   <div className="space-y-6">
@@ -351,7 +351,7 @@ export default function HospitalLogin() {
                         <div>
                           <Label
                             htmlFor="hospitalId"
-                            className="text-sm font-medium text-gray-700"
+                            className="text-base font-medium text-gray-700"
                           >
                             Hospital ID *
                           </Label>
@@ -362,7 +362,7 @@ export default function HospitalLogin() {
                             onChange={(e) => setHospitalId(e.target.value)}
                             placeholder="Enter your hospital ID"
                             required
-                            className="mt-1 h-12"
+                            className="mt-1 h-14 text-lg"
                             disabled={isLoading}
                           />
                         </div>
@@ -370,7 +370,7 @@ export default function HospitalLogin() {
                         <div>
                           <Label
                             htmlFor="password"
-                            className="text-sm font-medium text-gray-700"
+                            className="text-base font-medium text-gray-700"
                           >
                             Password *
                           </Label>
@@ -382,7 +382,7 @@ export default function HospitalLogin() {
                               onChange={(e) => setPassword(e.target.value)}
                               placeholder="Enter your password"
                               required
-                              className="h-12 pr-10"
+                              className="h-14 text-lg pr-10"
                               disabled={isLoading}
                             />
                             <button
@@ -414,14 +414,14 @@ export default function HospitalLogin() {
                             type="button"
                             variant="outline"
                             onClick={handleBackStep}
-                            className="flex-1 h-12"
+                            className="flex-1 h-14 text-lg"
                           >
-                            <ArrowLeft className="h-4 w-4 mr-2" />
+                            <ArrowLeft className="h-5 w-5 mr-2" />
                             Back
                           </Button>
                           <Button
                             type="submit"
-                            className="flex-1 h-12 bg-medical-600 hover:bg-medical-700 text-white"
+                            className="flex-1 h-14 text-lg bg-medical-600 hover:bg-medical-700 text-white"
                             disabled={isLoading || !hospitalId || !password}
                           >
                             {isLoading ? "Signing in..." : "Sign In"}

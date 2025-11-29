@@ -82,7 +82,7 @@ export default function NotificationDropdown({
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-[60vh] md:max-h-96 overflow-y-auto">
               {notifications.slice(0, 4).map((notification) => (
                 <div
                   key={notification.id}

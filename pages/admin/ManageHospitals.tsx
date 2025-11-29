@@ -295,8 +295,8 @@ export default function ManageHospitals() {
             </span>
           </div>
           <Button onClick={() => navigate("/admin/hospitals/register")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Hospital
+            <Plus className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">Add Hospital</span>
           </Button>
         </div>
 
