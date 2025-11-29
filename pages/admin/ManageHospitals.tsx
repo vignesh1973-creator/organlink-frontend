@@ -47,9 +47,10 @@ export default function ManageHospitals() {
     {
       key: "hospital_info",
       label: "Hospital Info",
+      className: "max-w-[200px]",
       render: (_, row: Hospital) => (
         <div>
-          <div className="font-medium text-gray-900">{row.name}</div>
+          <div className="font-medium text-gray-900 truncate" title={row.name}>{row.name}</div>
           <div className="text-sm text-gray-500">{row.hospital_id}</div>
         </div>
       ),
@@ -67,6 +68,7 @@ export default function ManageHospitals() {
     {
       key: "contact",
       label: "Contact",
+      className: "hidden lg:table-cell",
       render: (_, row: Hospital) => (
         <div>
           <div className="text-sm text-gray-900">{row.email}</div>
@@ -92,6 +94,7 @@ export default function ManageHospitals() {
     {
       key: "capacity",
       label: "Capacity",
+      className: "hidden md:table-cell",
       render: (value: number) => (
         <span className="text-sm text-gray-900">{value || "N/A"}</span>
       ),
@@ -99,7 +102,7 @@ export default function ManageHospitals() {
     {
       key: "specializations",
       label: "Specializations",
-      className: "whitespace-normal min-w-[200px]",
+      className: "whitespace-normal min-w-[150px]",
       render: (value: string[]) => (
         <div className="flex flex-wrap gap-1">
           {value && value.length > 0 ? (
